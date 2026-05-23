@@ -2,6 +2,7 @@ import {
   Contract,
   EventLog,
   Interface,
+  NonceManager,
   type Signer,
   type Provider,
   type ContractRunner,
@@ -58,7 +59,12 @@ export class QuestLensClient {
     if (!cfg.taskEscrow || cfg.taskEscrow === ZeroAddress) {
       throw new InvalidParameterError("taskEscrow address is required");
     }
-    const runner = cfg.signer ?? cfg.provider;
+    // Wrap any provided signer in NonceManager. ethers v6 plain Wallet does
+    // not lock the nonce across rapid consecutive sends; without this, an
+    // approve+createTask back-to-back can race and the second tx is sent with
+    // a stale nonce. NonceManager is the official ethers fix for this.
+    const wrappedSigner = cfg.signer ? new NonceManager(cfg.signer) : undefined;
+    const runner = wrappedSigner ?? cfg.provider;
     if (!runner) {
       throw new InvalidParameterError("Either signer or provider must be provided");
     }

@@ -28,6 +28,9 @@ pnpm-debug.log*
 # relayer runtime artifacts
 .relayer-storage/
 
+# demo bootstrap state (logs, pids, addresses, runtime artifacts)
+.demo-state/
+
 # editors
 .vscode/
 .idea/
