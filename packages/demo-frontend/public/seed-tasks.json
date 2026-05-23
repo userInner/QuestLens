@@ -1,0 +1,47 @@
+{
+  "0x3b07ec51bf9b80abaf774ceaaf7fef931cedd57d7fbfb38d7b68262f04b18167": {
+    "schemaVersion": "1.0",
+    "targetLatitude": 31.230416,
+    "targetLongitude": 121.473701,
+    "radiusMeters": 80,
+    "timeWindowStart": "2026-05-23T13:05:30.207Z",
+    "timeWindowEnd": "2026-05-24T13:06:30.208Z",
+    "targetCategory": "storefront"
+  },
+  "0xb308a74e99dcdf4a94fe0188aede9e59a583403bb733aedb849693cd5283f4c6": {
+    "schemaVersion": "1.0",
+    "targetLatitude": 31.234,
+    "targetLongitude": 121.48,
+    "radiusMeters": 100,
+    "timeWindowStart": "2026-05-23T13:05:30.432Z",
+    "timeWindowEnd": "2026-05-24T13:06:30.432Z",
+    "targetCategory": "traffic_sign"
+  },
+  "0xfe0bc46d735abba4361ebdfb4f9e0299ca131e486d85c8a9104cabf56a0ec416": {
+    "schemaVersion": "1.0",
+    "targetLatitude": 31.2252,
+    "targetLongitude": 121.4758,
+    "radiusMeters": 150,
+    "timeWindowStart": "2026-05-23T13:05:30.642Z",
+    "timeWindowEnd": "2026-05-24T13:06:30.642Z",
+    "targetCategory": "vehicle_damage"
+  },
+  "0xeb58100e1fa4013b57ddb8ba148e3d0310234b06738da2c12454995de55aa144": {
+    "schemaVersion": "1.0",
+    "targetLatitude": 31.2287,
+    "targetLongitude": 121.4705,
+    "radiusMeters": 200,
+    "timeWindowStart": "2026-05-23T13:05:30.837Z",
+    "timeWindowEnd": "2026-05-24T13:06:30.837Z",
+    "targetCategory": "construction_site"
+  },
+  "0xef830b8e2e2c7d47bb1e8e58c0ebba424a0a15650e0e8173e37b47b81e5fc255": {
+    "schemaVersion": "1.0",
+    "targetLatitude": 31.232,
+    "targetLongitude": 121.4785,
+    "radiusMeters": 300,
+    "timeWindowStart": "2026-05-23T13:05:31.044Z",
+    "timeWindowEnd": "2026-05-24T13:06:31.044Z",
+    "targetCategory": "weather_phenomenon"
+  }
+}

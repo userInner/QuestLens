@@ -226,6 +226,79 @@ export class QuestLensClient {
     };
   }
 
+  /**
+   * List all tasks that have been created on this TaskEscrow, optionally
+   * filtered by current status. Used by the Worker marketplace UI to
+   * surface open tasks and by the Requester dashboard for "my tasks".
+   *
+   * Implementation detail: scans `TaskCreated` events from `fromBlock` and
+   * then reads each Task struct on-chain to get the live status. This is
+   * fine for the demo (tens to hundreds of tasks); production deployments
+   * should run an indexer (Subgraph or equivalent) and bypass the SDK here.
+   */
+  async listTasks(opts: {
+    fromBlock?: number;
+    status?: TaskStatus[];
+    requester?: string;
+    worker?: string;
+  } = {}): Promise<TaskInfo[]> {
+    const fromBlock = opts.fromBlock ?? 0;
+    const createdFilter = this.contract.filters["TaskCreated"];
+    if (!createdFilter) {
+      throw new ContractRevertError("TaskCreated event filter not present in ABI");
+    }
+
+    let logs;
+    try {
+      logs = await this.contract.queryFilter(createdFilter(), fromBlock);
+    } catch (err) {
+      throw new NetworkError("Failed to query TaskCreated events", err);
+    }
+
+    const requesterFilter = opts.requester?.toLowerCase();
+    const taskIds: bigint[] = [];
+    for (const log of logs) {
+      if (!("args" in log)) continue;
+      const eventLog = log as EventLog;
+      const taskId = BigInt(eventLog.args[0]);
+      if (requesterFilter) {
+        const eventRequester = String(eventLog.args[1]).toLowerCase();
+        if (eventRequester !== requesterFilter) continue;
+      }
+      taskIds.push(taskId);
+    }
+
+    const infos = await Promise.all(taskIds.map((id) => this.getTaskInfo(id)));
+    return infos.filter((info) => {
+      if (opts.status && !opts.status.includes(info.status)) return false;
+      if (opts.worker && info.worker.toLowerCase() !== opts.worker.toLowerCase()) return false;
+      return true;
+    });
+  }
+
+  /**
+   * Subscribe to lifecycle events for any task. The callback fires whenever
+   * a task's status changes via TaskCreated, TaskAccepted, Settled, Slashed,
+   * or Refunded. Returns an unsubscribe function.
+   */
+  onTaskChange(callback: (taskId: bigint, eventName: string) => void): () => void {
+    const events = ["TaskCreated", "TaskAccepted", "Settled", "Slashed", "Refunded"] as const;
+
+    const handlers: Array<{name: string; fn: (...args: unknown[]) => void}> = [];
+    for (const name of events) {
+      const fn = (...args: unknown[]) => {
+        // First topic argument is always taskId for our event signatures.
+        const taskId = BigInt((args[0] ?? 0) as string | number | bigint);
+        callback(taskId, name);
+      };
+      this.contract.on(name, fn);
+      handlers.push({name, fn});
+    }
+    return () => {
+      for (const h of handlers) this.contract.off(h.name, h.fn);
+    };
+  }
+
   // ---------------- helpers ----------------
 
   private requireSigner(): Signer {
