@@ -11,6 +11,12 @@ via_ir = false
 gas_reports = ["TaskEscrow", "ReputationRegistry"]
 fs_permissions = [{ access = "read-write", path = "./" }]
 
+[invariant]
+runs = 64
+depth = 64
+fail_on_revert = false
+call_override = false
+
 [fmt]
 line_length = 120
 tab_width = 4

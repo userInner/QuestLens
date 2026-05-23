@@ -12,6 +12,7 @@ help:
 	@echo "  make install         pnpm install + forge install"
 	@echo "  make build           build every package + compile contracts"
 	@echo "  make test            run every package's test suite (45+ tests)"
+	@echo "  make invariant       run Foundry invariant fuzzer (5 properties x 4096 sequences)"
 	@echo ""
 	@echo "  make demo-up         start anvil, deploy, run relayer, run frontend (Demo Day)"
 	@echo "  make demo-down       stop anvil, relayer, frontend"
@@ -42,6 +43,9 @@ build:
 test:
 	pnpm -r --filter './packages/**' run test
 	cd packages/contracts && forge test
+
+invariant:
+	cd packages/contracts && forge test --match-path 'test/invariant/*' -vv
 
 # ----------------------------- demo lifecycle -----------------------------
 
