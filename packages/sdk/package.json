@@ -19,6 +19,7 @@
     "lint": "tsc -p tsconfig.json --noEmit"
   },
   "dependencies": {
+    "@questlens/relayer": "workspace:*",
     "@questlens/schemas": "workspace:*",
     "ethers": "^6.13.4"
   },

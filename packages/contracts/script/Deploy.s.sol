@@ -48,9 +48,17 @@ contract Deploy is Script {
             IReputationRegistry(address(registry)), governance, treasury, rewardPool, params
         );
 
-        // 4) Wire registry -> escrow and whitelist mUSDT.
+        // 4) Wire registry -> escrow, register deployer as Relayer (Phase 1 demo), and whitelist mUSDT.
         registry.setTaskEscrow(address(escrow));
+        registry.bootstrapRelayer(vm.addr(deployerKey), "https://relayer.questlens.io/attestation/latest.json");
         escrow.setStablecoinAllowed(mockUsdt, true);
+
+        // 5) Mint demo balances so the frontend works out-of-the-box on a fresh chain.
+        //    Anvil-deterministic accounts: #1 = requester, #2 = worker.
+        address requester = vm.envOr("REQUESTER_ADDRESS", address(0x70997970C51812dc3A010C7d01b50e0d17dc79C8));
+        address worker = vm.envOr("WORKER_ADDRESS", address(0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC));
+        MockUSDT(mockUsdt).mint(requester, 10_000_000); // 10 mUSDT
+        MockUSDT(mockUsdt).mint(worker, 10_000_000);    // 10 mUSDT
 
         vm.stopBroadcast();
 

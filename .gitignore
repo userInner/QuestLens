@@ -25,6 +25,9 @@ broadcast/
 npm-debug.log*
 pnpm-debug.log*
 
+# relayer runtime artifacts
+.relayer-storage/
+
 # editors
 .vscode/
 .idea/

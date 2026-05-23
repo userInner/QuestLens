@@ -119,6 +119,35 @@ export class QuestLensClient {
     return {taskId, txHash: receipt.hash, dataRequirementHash};
   }
 
+  /**
+   * Stake on a task to become the assigned Worker. The signer must hold enough
+   * stablecoin to cover the protocol's worker stake (0.1 USDT by default).
+   *
+   * Validates Requirement 3.
+   */
+  async stakeForTask(opts: {
+    taskId: bigint;
+    stablecoin: string;
+    stakeAmount: bigint;
+    autoApprove?: boolean;
+  }): Promise<{txHash: string}> {
+    const signer = this.requireSigner();
+    if (opts.autoApprove !== false) {
+      await this.ensureAllowance(opts.stablecoin, this.taskEscrowAddress, opts.stakeAmount, signer);
+    }
+    let tx;
+    try {
+      tx = await this.contract
+        .connect(signer)
+        .getFunction("stakeForTask")(opts.taskId);
+    } catch (err) {
+      throw this.wrapTxError(err, "stakeForTask");
+    }
+    const receipt = await tx.wait();
+    if (!receipt) throw new NetworkError("stakeForTask: no receipt");
+    return {txHash: receipt.hash};
+  }
+
   // ---------------- read-only ----------------
 
   /** Look up the current status of a task. */
