@@ -35,10 +35,12 @@ export function loadConfig(): DemoConfig {
     rpcUrl: readEnv("VITE_RPC_URL", "http://127.0.0.1:8545"),
     taskEscrowAddress: readEnv("VITE_TASK_ESCROW", ""),
     mockUsdtAddress: readEnv("VITE_MOCK_USDT", ""),
+    /** Anvil deterministic account #1 - publicly known test key, NOT a real secret. */
     requesterPrivateKey: readEnv(
       "VITE_REQUESTER_KEY",
       "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d",
     ),
+    /** Anvil deterministic account #2 - publicly known test key, NOT a real secret. */
     workerPrivateKey: readEnv(
       "VITE_WORKER_KEY",
       "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a",

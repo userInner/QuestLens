@@ -79,7 +79,9 @@ deploy:
 	@./scripts/deploy-local.sh
 
 relayer-start:
-	@cd packages/relayer && env $$(cat .env.demo | xargs) pnpm start
+	@cd packages/relayer && \
+	  if [ ! -f .env.demo ]; then cp .env.demo.example .env.demo; fi && \
+	  env $$(cat .env.demo | xargs) pnpm start
 
 frontend-dev:
 	@cd packages/demo-frontend && pnpm dev

@@ -16,6 +16,7 @@ const TASK_ESCROW = process.env["TASK_ESCROW"] ?? "0x9fe46736679d2d9a65f0992f227
 const MOCK_USDT = process.env["MOCK_USDT"] ?? "0x5fbdb2315678afecb367f032d93f642f64180aa3";
 const RELAYER_URL = process.env["RELAYER_URL"] ?? "http://127.0.0.1:3000";
 
+// Anvil deterministic accounts - publicly known test keys, NOT real secrets.
 const REQUESTER_KEY = "0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d";
 const WORKER_KEY = "0x5de4111afa1a4b94908f83103eb1f1706367c2e68ca870fc3fb9a804cdab365a";
 

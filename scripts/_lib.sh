@@ -7,7 +7,7 @@ ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 STATE_DIR="$ROOT/.demo-state"
 mkdir -p "$STATE_DIR"
 
-# Anvil + workspace defaults. Mirror packages/relayer/.env.demo.
+# Anvil + workspace defaults. Mirror packages/relayer/.env.demo.example.
 RPC_URL="${RPC_URL:-http://127.0.0.1:8545}"
 ANVIL_PORT="${ANVIL_PORT:-8545}"
 RELAYER_PORT="${RELAYER_PORT:-3000}"
