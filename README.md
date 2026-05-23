@@ -13,6 +13,11 @@ The protocol layer is exactly four artifacts: the two contracts, the two open st
 
 See `.kiro/specs/questlens-protocol/` for the requirements, design, task plan, and 11 formal correctness properties.
 
+For Demo Day prep, see:
+- `docs/pitch-onepager.md` — one-page pitch you can hand to a reviewer
+- `docs/demo-day-script.md` — 5-minute live demo script with Q&A predictions
+- `docs/backup-video-script.md` — 30-second / 90-second backup video plan
+
 ## Repository layout
 
 ```
