@@ -1,0 +1,15 @@
+{
+  "name": "@questlens/contracts",
+  "version": "0.1.0",
+  "private": true,
+  "description": "QuestLens Protocol smart contracts (TaskEscrow, ReputationRegistry) for Injective EVM",
+  "scripts": {
+    "build": "forge build",
+    "test": "forge test -vv",
+    "test:gas": "forge test --gas-report",
+    "fmt": "forge fmt",
+    "fmt:check": "forge fmt --check",
+    "coverage": "forge coverage",
+    "deploy:testnet": "forge script script/Deploy.s.sol --rpc-url injective_testnet --broadcast"
+  }
+}

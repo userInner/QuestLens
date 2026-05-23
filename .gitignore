@@ -1,0 +1,39 @@
+# dependencies
+node_modules/
+.pnpm-store/
+
+# build outputs
+dist/
+build/
+out/
+cache/
+artifacts/
+typechain-types/
+*.tsbuildinfo
+
+# foundry
+forge-cache/
+broadcast/
+
+# env
+.env
+.env.local
+.env.*.local
+
+# logs
+*.log
+npm-debug.log*
+pnpm-debug.log*
+
+# editors
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# coverage
+coverage/
+lcov.info
+
+# kiro internal config (user-specific only)
+.kiro/specs/*/.config.kiro
