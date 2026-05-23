@@ -1,0 +1,38 @@
+{
+  "name": "@questlens/schemas",
+  "version": "0.1.0",
+  "private": true,
+  "description": "QuestLens Protocol open standards: DataRequirement schema, Proof standard, RFC 8785 canonicalization, and keccak256 hashing utilities.",
+  "type": "module",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.js"
+    },
+    "./schemas/dataRequirement.v1.json": "./schemas/dataRequirement.v1.json",
+    "./schemas/proof.v1.json": "./schemas/proof.v1.json"
+  },
+  "files": [
+    "dist",
+    "schemas",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "test": "node --test --import tsx test/*.test.ts",
+    "lint": "tsc -p tsconfig.json --noEmit"
+  },
+  "dependencies": {
+    "ajv": "^8.17.1",
+    "ajv-formats": "^3.0.1",
+    "canonicalize": "^2.0.0",
+    "ethers": "^6.13.4"
+  },
+  "devDependencies": {
+    "tsx": "^4.19.2",
+    "typescript": "^5.5.4",
+    "@types/node": "^20.14.10"
+  }
+}
