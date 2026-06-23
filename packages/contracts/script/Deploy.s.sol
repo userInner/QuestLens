@@ -1,72 +1,92 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.26;
+pragma solidity ^0.8.20;
 
-import {Script} from "forge-std/Script.sol";
-import {console2} from "forge-std/console2.sol";
+import "forge-std/Script.sol";
+import "../src/IdolToken.sol";
+import "../src/IdolFactory.sol";
+import "../src/ERC8004Agent.sol";
 
-import {ReputationRegistry} from "../src/ReputationRegistry.sol";
-import {TaskEscrow} from "../src/TaskEscrow.sol";
-import {ITaskEscrow} from "../src/interfaces/ITaskEscrow.sol";
-import {IReputationRegistry} from "../src/interfaces/IReputationRegistry.sol";
-import {MockUSDT} from "../src/test/MockUSDT.sol";
-
-/// @title Deploy
-/// @notice Deploys the QuestLens protocol to a target network with hackathon-friendly defaults.
+/**
+ * @title Deploy
+ * @notice Deployment script for NovaIdol contracts
+ *
+ * Usage:
+ *   # Set environment variables
+ *   export PRIVATE_KEY=0x...
+ *   export IDOL_AGENT_ADDRESS=0x...
+ *   export TREASURY_ADDRESS=0x...       # Optional, defaults to IDOL_AGENT_ADDRESS
+ *   export IDOL_ROLE_TYPE=trader         # Optional, defaults to "trader"
+ *
+ *   # Deploy to Injective EVM Testnet
+ *   forge script script/Deploy.s.sol \
+ *     --rpc-url https://k8s.testnet.json-rpc.injective.network/ \
+ *     --broadcast --verify
+ */
 contract Deploy is Script {
+
     function run() external {
-        uint256 deployerKey = vm.envUint("DEPLOYER_PRIVATE_KEY");
-        address governance = vm.envOr("GOVERNANCE_ADDRESS", vm.addr(deployerKey));
-        address treasury = vm.envOr("PROTOCOL_TREASURY", vm.addr(deployerKey));
-        address rewardPool = vm.envOr("COMMUNITY_REWARD_POOL", vm.addr(deployerKey));
+        uint256 deployerPrivateKey = vm.envUint("PRIVATE_KEY");
+        address idolAgent = vm.envAddress("IDOL_AGENT_ADDRESS");
+        address treasuryAddress = vm.envOr("TREASURY_ADDRESS", idolAgent);
+        string memory roleType = vm.envOr("IDOL_ROLE_TYPE", string("trader"));
 
-        vm.startBroadcast(deployerKey);
+        vm.startBroadcast(deployerPrivateKey);
 
-        // 1) Deploy mock USDT for testnet (skip on mainnet by passing MOCK_USDT_ADDRESS).
-        address mockUsdt = vm.envOr("MOCK_USDT_ADDRESS", address(0));
-        if (mockUsdt == address(0)) {
-            mockUsdt = address(new MockUSDT());
-        }
+        // 1. Deploy ERC-8004 Agent Registry
+        ERC8004Agent agentRegistry = new ERC8004Agent();
+        console.log("ERC8004Agent deployed at:", address(agentRegistry));
 
-        // 2) Deploy ReputationRegistry first (governance only; TaskEscrow address wired in step 4).
-        ReputationRegistry registry = new ReputationRegistry(governance, 0);
+        // 2. Deploy Idol Factory
+        IdolFactory factory = new IdolFactory();
+        console.log("IdolFactory deployed at:", address(factory));
 
-        // 3) Deploy TaskEscrow with Phase 1 parameters.
-        ITaskEscrow.Parameters memory params = ITaskEscrow.Parameters({
-            minBounty: 0.5e6, // 0.5 USDT (6 decimals)
-            maxBounty: 2.0e6, // 2.0 USDT
-            workerStakeAmount: 0.1e6, // 0.1 USDT
-            protocolFeeBps: 500, // 5%
-            slashRewardPoolBps: 5000, // 50%
-            slashTreasuryBps: 5000, // 50%
-            taskTimeout: 72 hours,
-            submissionDeadline: 1 hours,
-            challengePeriod: 24 hours,
-            layer3CostCap: 0.1e6
-        });
+        // 3. Create a sample idol for testing
+        string memory personality = '{"traits":["rebellious","sarcastic","crypto-native"],"trading_style":"aggressive","communication":"twitter-native"}';
 
-        TaskEscrow escrow = new TaskEscrow(
-            IReputationRegistry(address(registry)), governance, treasury, rewardPool, params
+        uint256 creationFee = factory.creationFee();
+        console.log("Creation fee:", creationFee);
+
+        uint256 idolId = factory.createIdol{value: creationFee}(
+            "Vivian Token",
+            "VIVIAN",
+            idolAgent,
+            treasuryAddress,
+            roleType,
+            personality
         );
 
-        // 4) Wire registry -> escrow, register deployer as Relayer (Phase 1 demo), and whitelist mUSDT.
-        registry.setTaskEscrow(address(escrow));
-        registry.bootstrapRelayer(vm.addr(deployerKey), "https://relayer.questlens.io/attestation/latest.json");
-        escrow.setStablecoinAllowed(mockUsdt, true);
+        IdolFactory.IdolInfo memory idol = factory.getIdol(idolId);
+        console.log("");
+        console.log("=== Sample Idol Created ===");
+        console.log("  ID:", idolId);
+        console.log("  Token:", idol.token);
+        console.log("  Treasury:", idol.treasury);
+        console.log("  Agent:", idol.idolAgent);
+        console.log("  Role:", idol.roleType);
+        console.log("");
 
-        // 5) Mint demo balances so the frontend works out-of-the-box on a fresh chain.
-        //    Anvil-deterministic accounts: #1 = requester, #2 = worker.
-        address requester = vm.envOr("REQUESTER_ADDRESS", address(0x70997970C51812dc3A010C7d01b50e0d17dc79C8));
-        address worker = vm.envOr("WORKER_ADDRESS", address(0x3C44CdDdB6a900fa2b585dd299e03d12FA4293BC));
-        MockUSDT(mockUsdt).mint(requester, 10_000_000); // 10 mUSDT
-        MockUSDT(mockUsdt).mint(worker, 10_000_000);    // 10 mUSDT
+        // 4. Register agent identity in ERC-8004
+        bytes32 capabilities = bytes32(uint256(1 | 2 | 4)); // TRADING + CONTENT + SOCIAL
+        uint256 agentNftId = agentRegistry.registerAgent(
+            "Vivian",
+            "A rebellious AI trader with a taste for chaos and profits",
+            "azure-openai",
+            "gpt-4",
+            personality,
+            capabilities
+        );
+        console.log("=== Agent Identity Registered ===");
+        console.log("  NFT ID:", agentNftId);
+        console.log("  Registry:", address(agentRegistry));
 
         vm.stopBroadcast();
 
-        console2.log("MockUSDT:           ", mockUsdt);
-        console2.log("ReputationRegistry: ", address(registry));
-        console2.log("TaskEscrow:         ", address(escrow));
-        console2.log("Governance:         ", governance);
-        console2.log("Treasury:           ", treasury);
-        console2.log("RewardPool:         ", rewardPool);
+        // Print summary for frontend .env
+        console.log("");
+        console.log("=== Add to frontend .env ===");
+        console.log("VITE_IDOL_TOKEN_ADDRESS=", idol.token);
+        console.log("VITE_IDOL_FACTORY_ADDRESS=", address(factory));
+        console.log("VITE_ERC8004_AGENT_ADDRESS=", address(agentRegistry));
+        console.log("VITE_EVM_RPC_URL=https://k8s.testnet.json-rpc.injective.network/");
     }
 }

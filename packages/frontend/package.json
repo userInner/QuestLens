@@ -1,0 +1,39 @@
+{
+  "name": "@novaidol/frontend",
+  "version": "0.0.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "tsc && vite build",
+    "preview": "vite preview",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "@injectivelabs/networks": "^1.20.17",
+    "@injectivelabs/sdk-ts": "^1.20.17",
+    "@injectivelabs/ts-types": "^1.20.17",
+    "@injectivelabs/wallet-base": "^1.20.17",
+    "@injectivelabs/wallet-core": "^1.20.17",
+    "@injectivelabs/wallet-cosmos": "^1.20.17",
+    "@injectivelabs/wallet-evm": "^1.20.17",
+    "ethers": "^6.11.0",
+    "lucide-react": "^0.344.0",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-router-dom": "^7.15.1",
+    "recharts": "^2.12.0",
+    "vite-plugin-node-polyfills": "^0.28.0",
+    "zustand": "^4.5.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.0",
+    "@types/react-dom": "^18.2.0",
+    "@vitejs/plugin-react": "^4.2.0",
+    "autoprefixer": "^10.4.0",
+    "postcss": "^8.4.0",
+    "tailwindcss": "^3.4.0",
+    "typescript": "^5.4.0",
+    "vite": "^5.1.0"
+  }
+}

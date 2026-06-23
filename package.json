@@ -1,23 +1,20 @@
 {
-  "name": "questlens-protocol",
-  "version": "0.1.0",
+  "name": "novaidol",
   "private": true,
-  "description": "QuestLens Protocol monorepo: decentralized Physical-World Data Oracle for AI and Web3",
-  "engines": {
-    "node": ">=20",
-    "pnpm": ">=9"
-  },
+  "version": "0.0.1",
+  "description": "AI Virtual Idol with Bonding Curve Tokenomics on Injective",
   "scripts": {
-    "build": "pnpm -r --filter './packages/**' run build",
-    "test": "pnpm -r --filter './packages/**' run test",
-    "lint": "pnpm -r --filter './packages/**' run lint",
-    "contracts:build": "pnpm --filter @questlens/contracts run build",
-    "contracts:test": "pnpm --filter @questlens/contracts run test",
-    "sdk:build": "pnpm --filter @questlens/sdk run build"
+    "build": "pnpm -r build",
+    "dev": "pnpm --filter frontend dev",
+    "test": "pnpm -r test",
+    "deploy:local": "pnpm --filter contracts deploy:local",
+    "agent:dev": "pnpm --filter agent dev"
   },
   "devDependencies": {
-    "typescript": "^5.5.4",
-    "@types/node": "^20.14.10"
+    "@types/node": "^20.12.0",
+    "typescript": "^5.4.0"
   },
-  "packageManager": "pnpm@11.1.3"
+  "engines": {
+    "node": ">=20.0.0"
+  }
 }
