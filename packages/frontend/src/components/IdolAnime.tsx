@@ -14,8 +14,8 @@ const IdolAnime = () => {
       {/* Header with avatar */}
       <div className="flex items-start gap-5 mb-8">
         <div className="relative">
-          <div className="w-20 h-20 rounded-lg overflow-hidden border border-white/10 bg-gradient-to-br from-emerald-500/20 to-blue-500/20 flex items-center justify-center">
-            <span className="text-3xl font-bold text-white/60">V</span>
+          <div className="w-20 h-20 rounded-lg overflow-hidden border border-white/10">
+            <img src="/idols/vivian/avatar.png" alt="Vivian" className="w-full h-full object-cover" />
           </div>
           <div className="absolute -bottom-1 -right-1 w-5 h-5 bg-[#0a0a0a] rounded-full flex items-center justify-center">
             <div className="w-3 h-3 bg-emerald-500 rounded-full animate-pulse" />
@@ -40,12 +40,8 @@ const IdolAnime = () => {
       <div className="relative mb-6 rounded-lg overflow-hidden bg-gradient-to-b from-white/[0.02] to-transparent border border-white/5">
         <div className="aspect-[3/4] max-h-[280px] relative flex items-center justify-center">
           {/* Abstract agent visualization */}
-          <div className="relative w-40 h-40">
-            <div className="absolute inset-0 rounded-full bg-gradient-to-br from-emerald-500/10 to-blue-500/10 animate-pulse" />
-            <div className="absolute inset-4 rounded-full bg-gradient-to-br from-emerald-500/20 to-purple-500/20 border border-white/10" />
-            <div className="absolute inset-8 rounded-full bg-gradient-to-br from-white/5 to-white/10 border border-white/5 flex items-center justify-center">
-              <span className="text-4xl font-bold text-white/40">V</span>
-            </div>
+          <div className="relative w-48 h-48">
+            <img src="/idols/vivian/avatar.png" alt="Vivian" className="w-full h-full object-cover rounded-xl" />
           </div>
 
           {/* Overlay gradient */}

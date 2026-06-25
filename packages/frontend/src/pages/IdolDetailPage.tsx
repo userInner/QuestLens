@@ -161,8 +161,8 @@ const IdolDetailPage = () => {
           {/* Idol header */}
           <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
             <div className="flex items-center gap-5">
-              <div className="w-16 h-16 rounded-xl bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-white/10 flex items-center justify-center">
-                <span className="text-2xl font-bold text-white/60">{symbol?.charAt(0) || 'V'}</span>
+              <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10">
+                <img src="/idols/vivian/avatar.png" alt={symbol} className="w-full h-full object-cover" />
               </div>
               <div>
                 <div className="flex items-center gap-3">

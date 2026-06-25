@@ -168,8 +168,8 @@ const IdolProfilePage = () => {
             <div className="flex flex-col md:flex-row items-start md:items-center gap-6">
               {/* Avatar */}
               <div className="relative">
-                <div className="w-24 h-24 rounded-2xl bg-gradient-to-br from-emerald-500/30 to-blue-500/30 border-2 border-white/10 flex items-center justify-center">
-                  <span className="text-4xl font-bold text-white/60">V</span>
+                <div className="w-24 h-24 rounded-2xl border-2 border-white/10 overflow-hidden">
+                  <img src="/idols/vivian/avatar.png" alt="Vivian" className="w-full h-full object-cover" />
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center">
                   <Zap className="w-3.5 h-3.5 text-black" />
@@ -255,8 +255,8 @@ const IdolProfilePage = () => {
                   {/* Post header */}
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
-                      <div className="w-8 h-8 rounded-full bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-white/10 flex items-center justify-center">
-                        <span className="text-xs font-bold text-white/60">V</span>
+                      <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10">
+                        <img src="/idols/vivian/avatar.png" alt="Vivian" className="w-full h-full object-cover" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">

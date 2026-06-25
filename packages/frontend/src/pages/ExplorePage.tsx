@@ -122,8 +122,13 @@ const ExplorePage = () => {
                     <span className="text-xs text-white/20 font-mono w-8">#{idol.id}</span>
 
                     {/* Avatar */}
-                    <div className="w-12 h-12 rounded-lg bg-gradient-to-br from-emerald-500/20 to-blue-500/20 border border-white/10 flex items-center justify-center shrink-0">
-                      <span className="text-lg font-bold text-white/60">{idol.symbol.charAt(0)}</span>
+                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-white/10 shrink-0">
+                      <img
+                        src={`/idols/${idol.name.toLowerCase().replace(' token', '')}/avatar.png`}
+                        alt={idol.name}
+                        className="w-full h-full object-cover"
+                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.classList.add('bg-gradient-to-br', 'from-emerald-500/20', 'to-blue-500/20', 'flex', 'items-center', 'justify-center'); }}
+                      />
                     </div>
 
                     {/* Info */}
