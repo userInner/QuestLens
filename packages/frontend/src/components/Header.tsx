@@ -2,6 +2,7 @@ import { useState, useRef, useEffect } from 'react'
 import { Link, useLocation } from 'react-router-dom'
 import { Wallet as WalletIcon, Menu, X, ChevronDown, LogOut, Copy, Check, Loader2 } from 'lucide-react'
 import { useWallet, WALLET_OPTIONS } from '../hooks/useWallet'
+import LocaleSwitcher from './LocaleSwitcher'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -100,6 +101,7 @@ const Header = () => {
 
             {/* Wallet - Desktop */}
             <div className="hidden md:flex items-center gap-3">
+              <LocaleSwitcher />
               {isConnected ? (
                 <div className="relative" ref={accountMenuRef}>
                   <button

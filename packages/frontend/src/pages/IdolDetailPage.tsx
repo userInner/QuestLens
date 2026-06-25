@@ -252,9 +252,9 @@ const IdolDetailPage = () => {
           <div className="card mb-10 border-emerald-500/10">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-white flex items-center gap-2">
-                形象使用权 Licensing
+                Likeness Licensing
               </h3>
-              <span className="text-[10px] text-white/30">基于持币比例自动授权</span>
+              <span className="text-[10px] text-white/30">Auto-granted based on holding %</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.1 ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
@@ -262,31 +262,31 @@ const IdolDetailPage = () => {
                   <span className="text-xs font-medium text-emerald-400">Basic</span>
                   <span className="text-xs text-white/30 font-mono">≥ 10%</span>
                 </div>
-                <p className="text-sm text-white/60">社区内容创作权</p>
-                <p className="text-[10px] text-white/30 mt-1">粉丝二创、表情包、社区活动</p>
+                <p className="text-sm text-white/60">Community Content</p>
+                <p className="text-[10px] text-white/30 mt-1">Fan art, memes, community events</p>
               </div>
               <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.2 ? 'border-blue-500/30 bg-blue-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-blue-400">Standard</span>
                   <span className="text-xs text-white/30 font-mono">≥ 20%</span>
                 </div>
-                <p className="text-sm text-white/60">商业 AI 短剧使用权</p>
-                <p className="text-[10px] text-white/30 mt-1">用该形象参演商业内容、综艺</p>
+                <p className="text-sm text-white/60">Commercial AI Drama</p>
+                <p className="text-[10px] text-white/30 mt-1">Use likeness in AI short films, variety shows</p>
               </div>
               <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.5 ? 'border-purple-500/30 bg-purple-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-purple-400">Exclusive</span>
                   <span className="text-xs text-white/30 font-mono">≥ 50%</span>
                 </div>
-                <p className="text-sm text-white/60">独家使用权</p>
-                <p className="text-[10px] text-white/30 mt-1">限定期限内独占该形象商业权益</p>
+                <p className="text-sm text-white/60">Exclusive Rights</p>
+                <p className="text-[10px] text-white/30 mt-1">Sole commercial rights for a fixed period</p>
               </div>
             </div>
             {userBalance > 0 && totalSupply > 0 && (
               <div className="mt-4 pt-4 border-t border-white/5">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs text-white/40">
-                    你的持仓: {userBalance} / {totalSupply} ({((userBalance / totalSupply) * 100).toFixed(1)}%)
+                    Your holdings: {userBalance} / {totalSupply} ({((userBalance / totalSupply) * 100).toFixed(1)}%)
                   </span>
                   <span className={`text-xs font-medium ${
                     (userBalance / totalSupply) >= 0.5 ? 'text-purple-400' :
@@ -294,54 +294,54 @@ const IdolDetailPage = () => {
                     (userBalance / totalSupply) >= 0.1 ? 'text-emerald-400' :
                     'text-white/30'
                   }`}>
-                    {(userBalance / totalSupply) >= 0.5 ? 'Exclusive 权限已解锁' :
-                     (userBalance / totalSupply) >= 0.2 ? 'Standard 权限已解锁' :
-                     (userBalance / totalSupply) >= 0.1 ? 'Basic 权限已解锁' :
-                     '增持到 10% 解锁使用权'}
+                    {(userBalance / totalSupply) >= 0.5 ? 'Exclusive unlocked' :
+                     (userBalance / totalSupply) >= 0.2 ? 'Standard unlocked' :
+                     (userBalance / totalSupply) >= 0.1 ? 'Basic unlocked' :
+                     'Hold 10%+ to unlock'}
                   </span>
                 </div>
 
-                {/* 申请使用权按钮 */}
+                {/* Request License */}
                 {(userBalance / totalSupply) >= 0.1 && (
                   <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <p className="text-sm text-white font-medium">申请商业使用授权</p>
-                        <p className="text-xs text-white/30 mt-0.5">获得链上许可证，用于 AI 短剧制作</p>
+                        <p className="text-sm text-white font-medium">Request Commercial License</p>
+                        <p className="text-xs text-white/30 mt-0.5">Get an on-chain permit for AI content production</p>
                       </div>
                       <button
                         onClick={handleRequestLicense}
                         disabled={isRequestingLicense}
                         className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-white/90 transition-colors disabled:opacity-50"
                       >
-                        {isRequestingLicense ? 'Requesting...' : '申请 License'}
+                        {isRequestingLicense ? 'Requesting...' : 'Request License'}
                       </button>
                     </div>
 
                     {licenseGranted && (
                       <div className="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
-                        <p className="text-xs text-emerald-400 font-medium mb-1">License 已授权</p>
+                        <p className="text-xs text-emerald-400 font-medium mb-1">License Granted</p>
                         <p className="text-[10px] text-white/40">
-                          License ID: #{licenseId} | 有效期: 30 天 | 类型: {(userBalance / totalSupply) >= 0.5 ? 'Exclusive' : (userBalance / totalSupply) >= 0.2 ? 'Standard' : 'Basic'}
+                          License ID: #{licenseId} | Valid: 30 days | Tier: {(userBalance / totalSupply) >= 0.5 ? 'Exclusive' : (userBalance / totalSupply) >= 0.2 ? 'Standard' : 'Basic'}
                         </p>
                         <p className="text-[10px] text-white/30 mt-2">
-                          你现在可以下载该偶像的形象资源，用于 AI 短剧内容制作。制作收入请打入 Treasury 合约地址。
+                          You can now use this idol's likeness for AI content production. Revenue should be sent to the Treasury contract.
                         </p>
                       </div>
                     )}
 
                     <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                       <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
-                        <p className="text-[10px] text-white/30">流程</p>
-                        <p className="text-[10px] text-white/50 mt-1">申请 → 制作 → 上线 → 分润</p>
+                        <p className="text-[10px] text-white/30">Flow</p>
+                        <p className="text-[10px] text-white/50 mt-1">Request → Produce → Publish → Share</p>
                       </div>
                       <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
-                        <p className="text-[10px] text-white/30">收入归属</p>
-                        <p className="text-[10px] text-white/50 mt-1">流入 Treasury，全员分红</p>
+                        <p className="text-[10px] text-white/30">Revenue</p>
+                        <p className="text-[10px] text-white/50 mt-1">Flows to Treasury, all holders earn</p>
                       </div>
                       <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
-                        <p className="text-[10px] text-white/30">失效条件</p>
-                        <p className="text-[10px] text-white/50 mt-1">持仓低于门槛自动撤销</p>
+                        <p className="text-[10px] text-white/30">Revocation</p>
+                        <p className="text-[10px] text-white/50 mt-1">Auto-revokes if holdings drop below tier</p>
                       </div>
                     </div>
                   </div>
