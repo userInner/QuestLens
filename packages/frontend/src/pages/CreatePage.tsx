@@ -4,21 +4,9 @@ import Header from '../components/Header'
 import PureBackground from '../components/PureBackground'
 import { useWallet } from '../hooks/useWallet'
 import { useCreateIdol } from '../hooks/useCreateIdol'
-
-const steps = [
-  { id: 1, title: 'Configure', description: 'Set basic parameters' },
-  { id: 2, title: 'Personality', description: 'Define AI character' },
-  { id: 3, title: 'Deploy', description: 'Launch to testnet' },
-]
+import { useT } from '../i18n'
 
 const personalityTraits = ['rebellious', 'analytical', 'chaotic', 'strategic', 'cautious', 'aggressive', 'meme-savvy', 'technical']
-
-const roleTypes = [
-  { id: 'trader', label: 'Trader', desc: 'Perpetual futures & spot trading' },
-  { id: 'artist', label: 'Artist', desc: 'NFT creation & collection' },
-  { id: 'detective', label: 'Detective', desc: 'On-chain analysis & alpha' },
-  { id: 'influencer', label: 'Influencer', desc: 'Content creation & viral marketing' },
-]
 
 const CreatePage = () => {
   const [currentStep, setCurrentStep] = useState(1)
@@ -33,6 +21,20 @@ const CreatePage = () => {
     avatarPreview: '' as string,
   })
   const fileInputRef = useRef<HTMLInputElement>(null)
+  const t = useT()
+
+  const steps = [
+    { id: 1, title: t('create.step1'), description: t('create.step1.desc') },
+    { id: 2, title: t('create.step2'), description: t('create.step2.desc') },
+    { id: 3, title: t('create.step3'), description: t('create.step3.desc') },
+  ]
+
+  const roleTypes = [
+    { id: 'trader', label: t('create.role.trader'), desc: t('create.role.trader.desc') },
+    { id: 'artist', label: t('create.role.artist'), desc: t('create.role.artist.desc') },
+    { id: 'detective', label: t('create.role.detective'), desc: t('create.role.detective.desc') },
+    { id: 'influencer', label: t('create.role.influencer'), desc: t('create.role.influencer.desc') },
+  ]
 
   const { isConnected, ethereumAddress } = useWallet()
   const { deploy, isDeploying, txHash, error, deployedToken, reset } = useCreateIdol()
@@ -110,10 +112,10 @@ const CreatePage = () => {
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-px bg-white/20" />
-              <span className="text-sm text-white/40 uppercase tracking-[0.2em]">Launch</span>
+              <span className="text-sm text-white/40 uppercase tracking-[0.2em]">{t('create.label.launch')}</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">Create Agent</h1>
-            <p className="text-lg text-white/40 mt-4">Deploy an autonomous AI idol with bonding curve mechanics.</p>
+            <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">{t('create.title')}</h1>
+            <p className="text-lg text-white/40 mt-4">{t('create.subtitle')}</p>
           </div>
 
           {/* Steps indicator */}
@@ -138,10 +140,10 @@ const CreatePage = () => {
             {/* Step 1: Configure */}
             {currentStep === 1 && (
               <div className="space-y-6">
-                {/* Image Upload — 视觉焦点 */}
+                {/* Image Upload */}
                 <div>
                   <label className="text-xs text-white/40 uppercase tracking-wider mb-3 block">
-                    形象照片 / Avatar *
+                    {t('create.upload.title')}
                   </label>
                   <div
                     onDrop={handleDrop}
@@ -162,7 +164,7 @@ const CreatePage = () => {
                         />
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent opacity-0 hover:opacity-100 transition-opacity flex items-end justify-center pb-6">
                           <span className="text-sm text-white/80 bg-black/50 px-4 py-2 rounded-lg backdrop-blur-sm">
-                            点击更换图片
+                            {t('create.upload.change')}
                           </span>
                         </div>
                         <button
@@ -179,15 +181,15 @@ const CreatePage = () => {
                         </div>
                         <div className="text-center">
                           <p className="text-sm text-white/50 mb-1">
-                            拖拽图片到这里，或点击上传
+                            {t('create.upload.hint')}
                           </p>
                           <p className="text-xs text-white/30">
-                            AI 生成的形象 / 真人照片均可 · PNG/JPG · 最大 10MB
+                            {t('create.upload.formats')}
                           </p>
                         </div>
                         <div className="flex items-center gap-2 px-4 py-2 bg-white/5 rounded-lg border border-white/10">
                           <Image className="w-4 h-4 text-white/30" />
-                          <span className="text-xs text-white/40">这将成为你的 AI 偶像的固定形象</span>
+                          <span className="text-xs text-white/40">{t('create.upload.identity')}</span>
                         </div>
                       </div>
                     )}
@@ -200,14 +202,14 @@ const CreatePage = () => {
                     />
                   </div>
                   <p className="text-[10px] text-white/20 mt-2">
-                    上传后将存储到 IPFS，写入 ERC-8004 链上身份。此形象将作为可交易资产参与 AI 短剧演出。
+                    {t('create.upload.note')}
                   </p>
                 </div>
 
                 {/* Name + Symbol */}
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div>
-                    <label className="text-xs text-white/40 uppercase tracking-wider mb-2 block">名称 *</label>
+                    <label className="text-xs text-white/40 uppercase tracking-wider mb-2 block">{t('create.name')}</label>
                     <input
                       type="text"
                       value={formData.name}
@@ -217,7 +219,7 @@ const CreatePage = () => {
                     />
                   </div>
                   <div>
-                    <label className="text-xs text-white/40 uppercase tracking-wider mb-2 block">代币符号 *</label>
+                    <label className="text-xs text-white/40 uppercase tracking-wider mb-2 block">{t('create.symbol')}</label>
                     <input
                       type="text"
                       value={formData.symbol}
@@ -231,11 +233,11 @@ const CreatePage = () => {
 
                 {/* Description */}
                 <div>
-                  <label className="text-xs text-white/40 uppercase tracking-wider mb-2 block">人设描述</label>
+                  <label className="text-xs text-white/40 uppercase tracking-wider mb-2 block">{t('create.description')}</label>
                   <textarea
                     value={formData.description}
                     onChange={(e) => setFormData(prev => ({ ...prev, description: e.target.value }))}
-                    placeholder="描述这个 AI 偶像的性格、特长和故事背景..."
+                    placeholder={t('create.description.placeholder')}
                     rows={3}
                     className="w-full bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-white/20 transition-colors resize-none"
                   />
@@ -243,7 +245,7 @@ const CreatePage = () => {
 
                 {/* Role Type */}
                 <div>
-                  <label className="text-xs text-white/40 uppercase tracking-wider mb-4 block">角色类型</label>
+                  <label className="text-xs text-white/40 uppercase tracking-wider mb-4 block">{t('create.role')}</label>
                   <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
                     {roleTypes.map((role) => (
                       <button
@@ -260,10 +262,9 @@ const CreatePage = () => {
 
                 {/* Licensing info */}
                 <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-lg">
-                  <p className="text-xs text-emerald-400 font-medium mb-2">💡 形象使用权</p>
+                  <p className="text-xs text-emerald-400 font-medium mb-2">💡 {t('create.licensing.title')}</p>
                   <p className="text-xs text-white/40 leading-relaxed">
-                    持有代币即获得该形象的 AI 短剧使用权：10% 持仓 = 社区使用权 · 20% = 商业使用权 · 50% = 独家使用权。
-                    使用产生的收入将流入 Treasury，所有持币者共享分红。
+                    {t('create.licensing.desc')}
                   </p>
                 </div>
               </div>
@@ -273,7 +274,7 @@ const CreatePage = () => {
             {currentStep === 2 && (
               <div className="space-y-6">
                 <div>
-                  <label className="text-xs text-white/40 uppercase tracking-wider mb-4 block">Personality Traits (select 2-4)</label>
+                  <label className="text-xs text-white/40 uppercase tracking-wider mb-4 block">{t('create.personality.title')}</label>
                   <div className="flex flex-wrap gap-2">
                     {personalityTraits.map((trait) => (
                       <button
@@ -286,16 +287,16 @@ const CreatePage = () => {
                     ))}
                   </div>
                   {formData.personality.length < 2 && (
-                    <p className="text-xs text-white/30 mt-3">Select at least 2 traits to continue</p>
+                    <p className="text-xs text-white/30 mt-3">{t('create.personality.hint')}</p>
                   )}
                 </div>
                 <div>
-                  <label className="text-xs text-white/40 uppercase tracking-wider mb-4 block">Trading Strategy</label>
+                  <label className="text-xs text-white/40 uppercase tracking-wider mb-4 block">{t('create.strategy.title')}</label>
                   <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                     {[
-                      { id: 'conservative', label: 'Conservative', icon: Shield, desc: 'Low risk, steady gains' },
-                      { id: 'balanced', label: 'Balanced', icon: Zap, desc: 'Moderate risk/reward' },
-                      { id: 'aggressive', label: 'Aggressive', icon: Cpu, desc: 'High risk, high reward' },
+                      { id: 'conservative', label: t('create.strategy.conservative'), icon: Shield, desc: t('create.strategy.conservative.desc') },
+                      { id: 'balanced', label: t('create.strategy.balanced'), icon: Zap, desc: t('create.strategy.balanced.desc') },
+                      { id: 'aggressive', label: t('create.strategy.aggressive'), icon: Cpu, desc: t('create.strategy.aggressive.desc') },
                     ].map((strategy) => (
                       <button
                         key={strategy.id}
@@ -320,36 +321,36 @@ const CreatePage = () => {
                     <div className="w-20 h-20 bg-white rounded-full flex items-center justify-center mx-auto mb-6">
                       <Sparkles className="w-8 h-8 text-black" />
                     </div>
-                    <h3 className="text-2xl font-semibold text-white mb-2">Ready to Deploy</h3>
+                    <h3 className="text-2xl font-semibold text-white mb-2">{t('create.deploy.ready')}</h3>
                     <p className="text-white/40 mb-8 max-w-md mx-auto">
-                      Your AI agent <span className="text-white font-medium">{formData.name}</span> will be deployed to Injective EVM Testnet with bonding curve mechanics.
+                      <span className="text-white font-medium">{formData.name}</span> {t('create.deploy.desc')}
                     </p>
 
                     {/* Summary */}
                     <div className="p-6 bg-white/[0.02] border border-white/5 rounded-lg max-w-md mx-auto mb-8 text-left">
                       <div className="space-y-3 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-white/40">Name</span>
+                          <span className="text-white/40">{t('create.deploy.summary.name')}</span>
                           <span className="text-white font-medium">{formData.name} Token</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-white/40">Symbol</span>
+                          <span className="text-white/40">{t('create.deploy.summary.symbol')}</span>
                           <span className="text-white font-mono">${formData.symbol}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-white/40">Role</span>
+                          <span className="text-white/40">{t('create.deploy.summary.role')}</span>
                           <span className="text-white capitalize">{formData.roleType}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-white/40">Strategy</span>
+                          <span className="text-white/40">{t('create.deploy.summary.strategy')}</span>
                           <span className="text-white capitalize">{formData.strategy}</span>
                         </div>
                         <div className="flex justify-between">
-                          <span className="text-white/40">Traits</span>
+                          <span className="text-white/40">{t('create.deploy.summary.traits')}</span>
                           <span className="text-white">{formData.personality.join(', ')}</span>
                         </div>
                         <div className="flex justify-between pt-3 border-t border-white/5">
-                          <span className="text-white/40">Creation Fee</span>
+                          <span className="text-white/40">{t('create.deploy.summary.fee')}</span>
                           <span className="text-white font-mono">0.1 INJ</span>
                         </div>
                       </div>
@@ -369,7 +370,7 @@ const CreatePage = () => {
                         onClick={() => window.dispatchEvent(new CustomEvent('open-wallet-modal'))}
                         className="inline-flex items-center gap-2 px-8 py-4 bg-white text-black font-medium rounded-lg hover:bg-white/90 transition-colors"
                       >
-                        Connect Wallet to Deploy
+                        {t('create.deploy.connect')}
                       </button>
                     ) : (
                       <button
@@ -380,12 +381,12 @@ const CreatePage = () => {
                         {isDeploying ? (
                           <>
                             <Loader2 className="w-4 h-4 animate-spin" />
-                            Deploying...
+                            {t('create.deploy.deploying')}
                           </>
                         ) : (
                           <>
                             <Sparkles className="w-4 h-4" />
-                            Deploy Agent (0.1 INJ)
+                            {t('create.deploy.btn')}
                           </>
                         )}
                       </button>
@@ -397,15 +398,15 @@ const CreatePage = () => {
                     <div className="w-20 h-20 bg-emerald-500 rounded-full flex items-center justify-center mx-auto mb-6">
                       <Check className="w-8 h-8 text-black" />
                     </div>
-                    <h3 className="text-2xl font-semibold text-white mb-2">Agent Deployed!</h3>
+                    <h3 className="text-2xl font-semibold text-white mb-2">{t('create.deploy.success')}</h3>
                     <p className="text-white/40 mb-8 max-w-md mx-auto">
-                      <span className="text-white font-medium">{formData.name}</span> is now live on Injective EVM Testnet.
+                      <span className="text-white font-medium">{formData.name}</span> {t('create.deploy.live')}
                     </p>
 
                     <div className="p-6 bg-white/[0.02] border border-emerald-500/20 rounded-lg max-w-md mx-auto mb-8 text-left">
                       <div className="space-y-3 text-sm">
                         <div className="flex justify-between">
-                          <span className="text-white/40">Token Address</span>
+                          <span className="text-white/40">{t('create.deploy.token.address')}</span>
                           <a
                             href={`https://testnet.blockscout.injective.network/address/${deployedToken}`}
                             target="_blank"
@@ -418,7 +419,7 @@ const CreatePage = () => {
                         </div>
                         {txHash && (
                           <div className="flex justify-between">
-                            <span className="text-white/40">Transaction</span>
+                            <span className="text-white/40">{t('create.deploy.transaction')}</span>
                             <a
                               href={`https://testnet.blockscout.injective.network/tx/${txHash}`}
                               target="_blank"
@@ -438,13 +439,13 @@ const CreatePage = () => {
                         href={`/idol/${deployedToken}`}
                         className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-white/90 transition-colors"
                       >
-                        View Agent
+                        {t('create.deploy.view')}
                       </a>
                       <button
-                        onClick={() => { reset(); setCurrentStep(1); setFormData({ name: '', symbol: '', description: '', roleType: 'trader', personality: [], strategy: 'balanced' }) }}
+                        onClick={() => { reset(); setCurrentStep(1); setFormData({ name: '', symbol: '', description: '', roleType: 'trader', personality: [], strategy: 'balanced', avatarFile: null, avatarPreview: '' }) }}
                         className="inline-flex items-center gap-2 px-6 py-3 border border-white/10 text-white/60 font-medium rounded-lg hover:border-white/20 hover:text-white transition-colors"
                       >
-                        Create Another
+                        {t('create.deploy.another')}
                       </button>
                     </div>
                   </>
@@ -460,14 +461,14 @@ const CreatePage = () => {
                   disabled={currentStep === 1}
                   className="flex items-center gap-2 text-white/40 hover:text-white/60 transition-colors disabled:opacity-30"
                 >
-                  <ArrowLeft className="w-4 h-4" />Back
+                  <ArrowLeft className="w-4 h-4" />{t('create.nav.back')}
                 </button>
                 <button
                   onClick={() => setCurrentStep(prev => Math.min(3, prev + 1))}
                   disabled={(currentStep === 1 && !canProceedStep1) || (currentStep === 2 && !canProceedStep2)}
                   className="flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-white/90 transition-colors disabled:opacity-30 disabled:cursor-not-allowed"
                 >
-                  Continue<ArrowRight className="w-4 h-4" />
+                  {t('create.nav.continue')}<ArrowRight className="w-4 h-4" />
                 </button>
               </div>
             )}

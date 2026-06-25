@@ -4,10 +4,12 @@ import { Search, Filter, TrendingUp, ArrowUpRight, Loader2, Users, Activity } fr
 import Header from '../components/Header'
 import PureBackground from '../components/PureBackground'
 import { useExplore } from '../hooks/useExplore'
+import { useT } from '../i18n'
 
 const ExplorePage = () => {
   const [searchQuery, setSearchQuery] = useState('')
   const [sortBy, setSortBy] = useState('newest')
+  const t = useT()
 
   const { idols, isLoading } = useExplore()
 
@@ -43,10 +45,10 @@ const ExplorePage = () => {
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-px bg-white/20" />
-              <span className="text-sm text-white/40 uppercase tracking-[0.2em]">Market</span>
+              <span className="text-sm text-white/40 uppercase tracking-[0.2em]">{t('explore.label.market')}</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">Explore Agents</h1>
-            <p className="text-lg text-white/40 mt-4 max-w-xl">Discover autonomous AI idols powered by bonding curves on Injective.</p>
+            <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">{t('explore.title')}</h1>
+            <p className="text-lg text-white/40 mt-4 max-w-xl">{t('explore.subtitle')}</p>
           </div>
 
           {/* Search & Filter */}
@@ -57,7 +59,7 @@ const ExplorePage = () => {
                 type="text"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search agents..."
+                placeholder={t('explore.search.placeholder')}
                 className="w-full bg-white/5 border border-white/10 rounded-lg pl-12 pr-4 py-3 text-white placeholder:text-white/20 focus:outline-none focus:border-white/20 transition-colors"
               />
             </div>
@@ -67,10 +69,10 @@ const ExplorePage = () => {
                 onChange={(e) => setSortBy(e.target.value)}
                 className="bg-white/5 border border-white/10 rounded-lg px-4 py-3 text-white/60 text-sm focus:outline-none focus:border-white/20"
               >
-                <option value="newest">Newest</option>
-                <option value="price">Price</option>
-                <option value="holders">Holders</option>
-                <option value="treasury">Treasury</option>
+                <option value="newest">{t('explore.sort.newest')}</option>
+                <option value="price">{t('explore.sort.price')}</option>
+                <option value="holders">{t('explore.sort.holders')}</option>
+                <option value="treasury">{t('explore.sort.treasury')}</option>
               </select>
               <button className="p-3 bg-white/5 border border-white/10 rounded-lg text-white/40 hover:text-white/60 transition-colors">
                 <Filter className="w-4 h-4" />
@@ -81,10 +83,10 @@ const ExplorePage = () => {
           {/* Stats Row */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             {[
-              { label: 'Total Agents', value: idols.length.toString() },
-              { label: 'Total TVL', value: `${totalTVL.toFixed(1)} INJ` },
-              { label: 'Total Holders', value: totalHolders.toString() },
-              { label: 'Network', value: 'Injective Testnet' },
+              { label: t('explore.stats.agents'), value: idols.length.toString() },
+              { label: t('explore.stats.tvl'), value: `${totalTVL.toFixed(1)} INJ` },
+              { label: t('explore.stats.holders'), value: totalHolders.toString() },
+              { label: t('explore.stats.network'), value: t('common.network') },
             ].map((stat) => (
               <div key={stat.label} className="p-4 bg-white/[0.02] border border-white/5 rounded-lg">
                 <p className="text-xs text-white/30 uppercase tracking-wider mb-1">{stat.label}</p>
@@ -97,7 +99,7 @@ const ExplorePage = () => {
           {isLoading && (
             <div className="flex items-center justify-center py-20">
               <Loader2 className="w-6 h-6 text-white/40 animate-spin" />
-              <span className="ml-3 text-white/40">Loading agents from chain...</span>
+              <span className="ml-3 text-white/40">{t('explore.loading')}</span>
             </div>
           )}
 
@@ -106,9 +108,9 @@ const ExplorePage = () => {
             <div className="space-y-6">
               {filteredIdols.length === 0 ? (
                 <div className="text-center py-20">
-                  <p className="text-white/40 mb-4">No agents found</p>
+                  <p className="text-white/40 mb-4">{t('explore.empty')}</p>
                   <Link to="/create" className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-white/90 transition-colors">
-                    Create First Agent
+                    {t('explore.create.first')}
                   </Link>
                 </div>
               ) : (
@@ -138,7 +140,7 @@ const ExplorePage = () => {
                         {/* Status badge */}
                         <div className="absolute top-4 right-4 flex items-center gap-1.5 px-2.5 py-1 bg-black/60 backdrop-blur-sm rounded-full border border-white/10">
                           <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
-                          <span className="text-[10px] text-emerald-400 font-medium">Active</span>
+                          <span className="text-[10px] text-emerald-400 font-medium">{t('explore.card.active')}</span>
                         </div>
 
                         {/* Name overlay */}
@@ -160,15 +162,15 @@ const ExplorePage = () => {
                       <div className="grid grid-cols-3 divide-x divide-white/5 bg-[#0a0a0a]">
                         <div className="p-3 text-center">
                           <p className="text-sm font-mono text-white">{idol.currentPrice.toFixed(4)}</p>
-                          <p className="text-[10px] text-white/30">Price (INJ)</p>
+                          <p className="text-[10px] text-white/30">{t('explore.card.price')}</p>
                         </div>
                         <div className="p-3 text-center">
                           <p className="text-sm font-mono text-white">{idol.holderCount}</p>
-                          <p className="text-[10px] text-white/30">Fans</p>
+                          <p className="text-[10px] text-white/30">{t('explore.card.fans')}</p>
                         </div>
                         <div className="p-3 text-center">
                           <p className="text-sm font-mono text-emerald-400">{idol.treasuryValue.toFixed(2)}</p>
-                          <p className="text-[10px] text-white/30">Treasury</p>
+                          <p className="text-[10px] text-white/30">{t('explore.card.treasury')}</p>
                         </div>
                       </div>
                     </Link>
@@ -186,7 +188,7 @@ const ExplorePage = () => {
                 className="inline-flex items-center gap-2 px-8 py-3 border border-white/10 text-white/40 text-sm font-medium rounded-lg hover:border-white/20 hover:text-white/60 transition-colors"
               >
                 <TrendingUp className="w-4 h-4" />
-                Create New Agent
+                {t('explore.create')}
               </Link>
             </div>
           )}

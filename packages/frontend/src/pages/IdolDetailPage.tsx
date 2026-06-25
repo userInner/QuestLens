@@ -9,6 +9,7 @@ import TradeMinimal from '../components/TradeMinimal'
 import { useIdolToken } from '../hooks/useIdolToken'
 import { useWallet } from '../hooks/useWallet'
 import { IDOL_TOKEN_ABI, getReadProvider, formatInj, CONTRACT_ADDRESSES, isContractDeployed } from '../services/contract'
+import { useT } from '../i18n'
 
 interface TradeEvent {
   type: 'buy' | 'sell'
@@ -35,6 +36,7 @@ const IdolDetailPage = () => {
   const [isRequestingLicense, setIsRequestingLicense] = useState(false)
   const [licenseGranted, setLicenseGranted] = useState(false)
   const [licenseId, setLicenseId] = useState(0)
+  const t = useT()
 
   const {
     name, symbol, currentPrice, totalSupply,
@@ -175,7 +177,7 @@ const IdolDetailPage = () => {
           {/* Back nav */}
           <Link to="/explore" className="inline-flex items-center gap-2 text-white/40 hover:text-white/60 transition-colors mb-6">
             <ArrowLeft className="w-4 h-4" />
-            <span className="text-sm">Back to Explore</span>
+            <span className="text-sm">{t('detail.back')}</span>
           </Link>
 
           {/* ─── Hero Banner with large idol image ─── */}
@@ -214,7 +216,7 @@ const IdolDetailPage = () => {
                     className="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg text-sm text-white/60 hover:text-white/80 transition-colors"
                   >
                     <ExternalLink className="w-4 h-4" />
-                    Explorer
+                    {t('detail.explorer')}
                   </a>
                 </div>
               </div>
@@ -232,11 +234,11 @@ const IdolDetailPage = () => {
           {/* Stats row */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-10">
             {[
-              { icon: Activity, label: 'Price', value: `${currentPrice.toFixed(6)} INJ` },
-              { icon: TrendingUp, label: 'Supply', value: `${totalSupply} tokens` },
-              { icon: Users, label: 'Holders', value: holderCount.toString() },
-              { icon: Zap, label: 'Treasury', value: `${treasuryValue.toFixed(2)} INJ` },
-              { icon: Activity, label: 'Deposited', value: `${totalDeposited.toFixed(4)} INJ` },
+              { icon: Activity, label: t('detail.stats.price'), value: `${currentPrice.toFixed(6)} INJ` },
+              { icon: TrendingUp, label: t('detail.stats.supply'), value: `${totalSupply} ${t('common.tokens').toLowerCase()}` },
+              { icon: Users, label: t('detail.stats.holders'), value: holderCount.toString() },
+              { icon: Zap, label: t('detail.stats.treasury'), value: `${treasuryValue.toFixed(2)} INJ` },
+              { icon: Activity, label: t('detail.stats.deposited'), value: `${totalDeposited.toFixed(4)} INJ` },
             ].map((stat) => (
               <div key={stat.label} className="p-4 bg-white/[0.02] border border-white/5 rounded-lg">
                 <div className="flex items-center gap-2 mb-2">
@@ -248,13 +250,13 @@ const IdolDetailPage = () => {
             ))}
           </div>
 
-          {/* ─── Licensing Rights (持币使用权) ─── */}
+          {/* ─── Licensing Rights ─── */}
           <div className="card mb-10 border-emerald-500/10">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-white flex items-center gap-2">
-                Likeness Licensing
+                {t('detail.licensing.title')}
               </h3>
-              <span className="text-[10px] text-white/30">Auto-granted based on holding %</span>
+              <span className="text-[10px] text-white/30">{t('detail.licensing.subtitle')}</span>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.1 ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
@@ -262,31 +264,31 @@ const IdolDetailPage = () => {
                   <span className="text-xs font-medium text-emerald-400">Basic</span>
                   <span className="text-xs text-white/30 font-mono">≥ 10%</span>
                 </div>
-                <p className="text-sm text-white/60">Community Content</p>
-                <p className="text-[10px] text-white/30 mt-1">Fan art, memes, community events</p>
+                <p className="text-sm text-white/60">{t('detail.licensing.basic')}</p>
+                <p className="text-[10px] text-white/30 mt-1">{t('detail.licensing.basic.desc')}</p>
               </div>
               <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.2 ? 'border-blue-500/30 bg-blue-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-blue-400">Standard</span>
                   <span className="text-xs text-white/30 font-mono">≥ 20%</span>
                 </div>
-                <p className="text-sm text-white/60">Commercial AI Drama</p>
-                <p className="text-[10px] text-white/30 mt-1">Use likeness in AI short films, variety shows</p>
+                <p className="text-sm text-white/60">{t('detail.licensing.standard')}</p>
+                <p className="text-[10px] text-white/30 mt-1">{t('detail.licensing.standard.desc')}</p>
               </div>
               <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.5 ? 'border-purple-500/30 bg-purple-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
                 <div className="flex items-center justify-between mb-2">
                   <span className="text-xs font-medium text-purple-400">Exclusive</span>
                   <span className="text-xs text-white/30 font-mono">≥ 50%</span>
                 </div>
-                <p className="text-sm text-white/60">Exclusive Rights</p>
-                <p className="text-[10px] text-white/30 mt-1">Sole commercial rights for a fixed period</p>
+                <p className="text-sm text-white/60">{t('detail.licensing.exclusive')}</p>
+                <p className="text-[10px] text-white/30 mt-1">{t('detail.licensing.exclusive.desc')}</p>
               </div>
             </div>
             {userBalance > 0 && totalSupply > 0 && (
               <div className="mt-4 pt-4 border-t border-white/5">
                 <div className="flex items-center justify-between mb-4">
                   <span className="text-xs text-white/40">
-                    Your holdings: {userBalance} / {totalSupply} ({((userBalance / totalSupply) * 100).toFixed(1)}%)
+                    {t('detail.licensing.holdings')}: {userBalance} / {totalSupply} ({((userBalance / totalSupply) * 100).toFixed(1)}%)
                   </span>
                   <span className={`text-xs font-medium ${
                     (userBalance / totalSupply) >= 0.5 ? 'text-purple-400' :
@@ -294,10 +296,10 @@ const IdolDetailPage = () => {
                     (userBalance / totalSupply) >= 0.1 ? 'text-emerald-400' :
                     'text-white/30'
                   }`}>
-                    {(userBalance / totalSupply) >= 0.5 ? 'Exclusive unlocked' :
-                     (userBalance / totalSupply) >= 0.2 ? 'Standard unlocked' :
-                     (userBalance / totalSupply) >= 0.1 ? 'Basic unlocked' :
-                     'Hold 10%+ to unlock'}
+                    {(userBalance / totalSupply) >= 0.5 ? t('detail.licensing.unlocked.exclusive') :
+                     (userBalance / totalSupply) >= 0.2 ? t('detail.licensing.unlocked.standard') :
+                     (userBalance / totalSupply) >= 0.1 ? t('detail.licensing.unlocked.basic') :
+                     t('detail.licensing.unlocked.none')}
                   </span>
                 </div>
 
@@ -306,42 +308,42 @@ const IdolDetailPage = () => {
                   <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl">
                     <div className="flex items-center justify-between mb-3">
                       <div>
-                        <p className="text-sm text-white font-medium">Request Commercial License</p>
-                        <p className="text-xs text-white/30 mt-0.5">Get an on-chain permit for AI content production</p>
+                        <p className="text-sm text-white font-medium">{t('detail.licensing.request')}</p>
+                        <p className="text-xs text-white/30 mt-0.5">{t('detail.licensing.request.desc')}</p>
                       </div>
                       <button
                         onClick={handleRequestLicense}
                         disabled={isRequestingLicense}
                         className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-white/90 transition-colors disabled:opacity-50"
                       >
-                        {isRequestingLicense ? 'Requesting...' : 'Request License'}
+                        {isRequestingLicense ? t('detail.licensing.requesting') : t('detail.licensing.request.btn')}
                       </button>
                     </div>
 
                     {licenseGranted && (
                       <div className="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
-                        <p className="text-xs text-emerald-400 font-medium mb-1">License Granted</p>
+                        <p className="text-xs text-emerald-400 font-medium mb-1">{t('detail.licensing.granted')}</p>
                         <p className="text-[10px] text-white/40">
                           License ID: #{licenseId} | Valid: 30 days | Tier: {(userBalance / totalSupply) >= 0.5 ? 'Exclusive' : (userBalance / totalSupply) >= 0.2 ? 'Standard' : 'Basic'}
                         </p>
                         <p className="text-[10px] text-white/30 mt-2">
-                          You can now use this idol's likeness for AI content production. Revenue should be sent to the Treasury contract.
+                          {t('detail.licensing.granted.desc')}
                         </p>
                       </div>
                     )}
 
                     <div className="mt-3 grid grid-cols-3 gap-2 text-center">
                       <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
-                        <p className="text-[10px] text-white/30">Flow</p>
-                        <p className="text-[10px] text-white/50 mt-1">Request → Produce → Publish → Share</p>
+                        <p className="text-[10px] text-white/30">{t('detail.licensing.flow')}</p>
+                        <p className="text-[10px] text-white/50 mt-1">{t('detail.licensing.flow.desc')}</p>
                       </div>
                       <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
-                        <p className="text-[10px] text-white/30">Revenue</p>
-                        <p className="text-[10px] text-white/50 mt-1">Flows to Treasury, all holders earn</p>
+                        <p className="text-[10px] text-white/30">{t('detail.licensing.revenue')}</p>
+                        <p className="text-[10px] text-white/50 mt-1">{t('detail.licensing.revenue.desc')}</p>
                       </div>
                       <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
-                        <p className="text-[10px] text-white/30">Revocation</p>
-                        <p className="text-[10px] text-white/50 mt-1">Auto-revokes if holdings drop below tier</p>
+                        <p className="text-[10px] text-white/30">{t('detail.licensing.revoke')}</p>
+                        <p className="text-[10px] text-white/50 mt-1">{t('detail.licensing.revoke.desc')}</p>
                       </div>
                     </div>
                   </div>
@@ -364,11 +366,11 @@ const IdolDetailPage = () => {
 
               {/* Trade History */}
               <div className="card">
-                <h3 className="text-lg font-medium text-white mb-6">Trade History</h3>
+                <h3 className="text-lg font-medium text-white mb-6">{t('detail.history.title')}</h3>
                 {isLoadingHistory ? (
-                  <div className="text-center py-8 text-white/30">Loading trades from chain...</div>
+                  <div className="text-center py-8 text-white/30">{t('detail.history.loading')}</div>
                 ) : tradeHistory.length === 0 ? (
-                  <div className="text-center py-8 text-white/30">No trades yet</div>
+                  <div className="text-center py-8 text-white/30">{t('detail.history.empty')}</div>
                 ) : (
                   <div className="space-y-2">
                     {tradeHistory.slice(0, 20).map((trade, i) => (
@@ -380,7 +382,7 @@ const IdolDetailPage = () => {
                             {trade.type.toUpperCase()}
                           </span>
                           <div>
-                            <p className="text-sm text-white/70">{trade.amount} tokens</p>
+                            <p className="text-sm text-white/70">{trade.amount} {t('common.tokens').toLowerCase()}</p>
                             <p className="text-xs text-white/30 font-mono">
                               {trade.address.slice(0, 8)}...{trade.address.slice(-4)}
                             </p>
@@ -421,15 +423,15 @@ const IdolDetailPage = () => {
               <div className="card">
                 <div className="flex items-center gap-2 mb-6">
                   <MessageSquare className="w-4 h-4 text-blue-400" />
-                  <h3 className="text-lg font-medium text-white">AI Agent Feed</h3>
+                  <h3 className="text-lg font-medium text-white">{t('detail.feed.title')}</h3>
                   <span className="px-2 py-0.5 text-[10px] font-medium bg-blue-500/10 text-blue-400 rounded border border-blue-500/20">
-                    Auto-generated
+                    {t('detail.feed.auto')}
                   </span>
                 </div>
 
                 {tweets.length === 0 ? (
                   <div className="text-center py-8 text-white/30 text-sm">
-                    Agent will post after first trade events...
+                    {t('detail.feed.empty')}
                   </div>
                 ) : (
                   <div className="space-y-4">
@@ -464,7 +466,7 @@ const IdolDetailPage = () => {
 
                 <div className="mt-4 pt-4 border-t border-white/5">
                   <p className="text-xs text-white/20 text-center">
-                    Tweets auto-generated by AI agent based on on-chain trade events
+                    {t('detail.feed.note')}
                   </p>
                 </div>
               </div>

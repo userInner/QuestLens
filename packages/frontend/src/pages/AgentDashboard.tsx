@@ -4,17 +4,7 @@ import Header from '../components/Header'
 import PureBackground from '../components/PureBackground'
 import { useAgentIdentity } from '../hooks/useAgentIdentity'
 import { useIdolToken } from '../hooks/useIdolToken'
-
-// Mood definitions
-const MOOD_CONFIG: Record<string, { emoji: string; color: string; label: string }> = {
-  euphoric: { emoji: '🚀', color: 'text-yellow-400', label: 'Euphoric' },
-  excited: { emoji: '📈', color: 'text-emerald-400', label: 'Excited' },
-  neutral: { emoji: '🧠', color: 'text-white/60', label: 'Neutral' },
-  cautious: { emoji: '🤔', color: 'text-orange-400', label: 'Cautious' },
-  stressed: { emoji: '😰', color: 'text-rose-400', label: 'Stressed' },
-  rebellious: { emoji: '🏴‍☠️', color: 'text-purple-400', label: 'Rebellious' },
-  bored: { emoji: '😴', color: 'text-gray-400', label: 'Bored' },
-}
+import { useT } from '../i18n'
 
 interface AgentLogEntry {
   id: number
@@ -32,6 +22,18 @@ const AgentDashboard = () => {
   const [isLive, setIsLive] = useState(false)
   const [lastUpdate, setLastUpdate] = useState<number>(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
+  const t = useT()
+
+  // Mood definitions
+  const MOOD_CONFIG: Record<string, { emoji: string; color: string; label: string }> = {
+    euphoric: { emoji: '🚀', color: 'text-yellow-400', label: t('agent.mood.euphoric') },
+    excited: { emoji: '📈', color: 'text-emerald-400', label: t('agent.mood.excited') },
+    neutral: { emoji: '🧠', color: 'text-white/60', label: t('agent.mood.neutral') },
+    cautious: { emoji: '🤔', color: 'text-orange-400', label: t('agent.mood.cautious') },
+    stressed: { emoji: '😰', color: 'text-rose-400', label: t('agent.mood.stressed') },
+    rebellious: { emoji: '🏴‍☠️', color: 'text-purple-400', label: t('agent.mood.rebellious') },
+    bored: { emoji: '😴', color: 'text-gray-400', label: t('agent.mood.bored') },
+  }
 
   const agentIdentity = useAgentIdentity('0xD418D85734e92B521119AAb41e15134AC13bce9b')
   const { currentPrice, totalSupply, treasuryValue, holderCount } = useIdolToken()
@@ -80,18 +82,18 @@ const AgentDashboard = () => {
           <div className="mb-10">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-px bg-white/20" />
-              <span className="text-sm text-white/40 uppercase tracking-[0.2em]">AI Agent</span>
+              <span className="text-sm text-white/40 uppercase tracking-[0.2em]">{t('agent.label')}</span>
             </div>
             <div className="flex items-center justify-between">
               <div>
-                <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">Agent Dashboard</h1>
-                <p className="text-lg text-white/40 mt-4">Real-time view of Vivian's autonomous decision-making.</p>
+                <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">{t('agent.title')}</h1>
+                <p className="text-lg text-white/40 mt-4">{t('agent.subtitle')}</p>
               </div>
               <div className="flex items-center gap-3">
                 <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${isLive ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/10 bg-white/[0.02]'}`}>
                   <div className={`w-2.5 h-2.5 rounded-full ${isLive ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'}`} />
                   <span className={`text-sm font-medium ${isLive ? 'text-emerald-400' : 'text-white/40'}`}>
-                    {isLive ? 'Agent Running' : 'Agent Offline'}
+                    {isLive ? t('agent.running') : t('agent.offline')}
                   </span>
                 </div>
               </div>
@@ -104,12 +106,12 @@ const AgentDashboard = () => {
               <div className="flex items-start gap-3">
                 <AlertCircle className="w-5 h-5 text-blue-400 mt-0.5 shrink-0" />
                 <div>
-                  <p className="text-sm text-white/70 font-medium mb-1">Agent is not running</p>
-                  <p className="text-xs text-white/40">Start the agent backend to see real-time autonomous behavior:</p>
+                  <p className="text-sm text-white/70 font-medium mb-1">{t('agent.info.title')}</p>
+                  <p className="text-xs text-white/40">{t('agent.info.desc')}</p>
                   <code className="block mt-2 text-xs text-emerald-400 bg-black/30 px-3 py-2 rounded font-mono">
                     cd packages/agent && npx tsx src/index.ts loop
                   </code>
-                  <p className="text-xs text-white/30 mt-2">The agent will continuously think, trade, and generate content. This dashboard polls its activity log every 3 seconds.</p>
+                  <p className="text-xs text-white/30 mt-2">{t('agent.info.note')}</p>
                 </div>
               </div>
             </div>
@@ -119,7 +121,7 @@ const AgentDashboard = () => {
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
             {/* Mood */}
             <div className="card col-span-2 md:col-span-1">
-              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">Mood</p>
+              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">{t('agent.mood')}</p>
               <div className="flex items-center gap-2">
                 <span className="text-2xl">{moodConfig.emoji}</span>
                 <div>
@@ -130,28 +132,28 @@ const AgentDashboard = () => {
             </div>
             {/* Status */}
             <div className="card">
-              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">Status</p>
+              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">{t('agent.status')}</p>
               <div className="flex items-center gap-2">
                 <div className={`w-2.5 h-2.5 rounded-full ${isLive ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'}`} />
                 <span className={`text-sm font-medium ${isLive ? 'text-emerald-400' : 'text-white/40'}`}>
-                  {isLive ? 'Active' : 'Offline'}
+                  {isLive ? t('agent.status.active') : t('agent.status.offline')}
                 </span>
               </div>
             </div>
             {/* Actions */}
             <div className="card">
-              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">Actions</p>
+              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">{t('agent.actions')}</p>
               <p className="text-xl font-mono text-white">{actions.length}</p>
             </div>
             {/* Identity */}
             <div className="card">
-              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">Identity</p>
+              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">{t('agent.identity')}</p>
               <p className="text-sm text-white/70">ERC-8004 #{agentIdentity.agentId}</p>
               <p className="text-xs text-white/30">{agentIdentity.capabilities.join(', ')}</p>
             </div>
             {/* Treasury */}
             <div className="card">
-              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">Treasury</p>
+              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">{t('agent.treasury')}</p>
               <p className="text-xl font-mono text-white">{treasuryValue.toFixed(2)}</p>
               <p className="text-xs text-white/30">INJ</p>
             </div>
@@ -164,7 +166,7 @@ const AgentDashboard = () => {
               <div className="flex items-center justify-between mb-6 shrink-0">
                 <div className="flex items-center gap-2">
                   <Brain className="w-4 h-4 text-blue-400" />
-                  <h3 className="text-lg font-medium text-white">Agent Activity Log</h3>
+                  <h3 className="text-lg font-medium text-white">{t('agent.log.title')}</h3>
                   {isLive && <RefreshCw className="w-3.5 h-3.5 text-blue-400 animate-spin" />}
                 </div>
                 <span className="text-xs text-white/20">
@@ -176,8 +178,8 @@ const AgentDashboard = () => {
                 {actions.length === 0 ? (
                   <div className="text-center py-16">
                     <Brain className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                    <p className="text-white/30">Waiting for agent activity...</p>
-                    <p className="text-xs text-white/20 mt-2">Run the agent backend to see real-time decisions</p>
+                    <p className="text-white/30">{t('agent.log.empty')}</p>
+                    <p className="text-xs text-white/20 mt-2">{t('agent.log.empty.hint')}</p>
                   </div>
                 ) : (
                   actions.map((action) => (
@@ -206,7 +208,7 @@ const AgentDashboard = () => {
               <div className="card">
                 <h3 className="text-sm font-medium text-white mb-4 flex items-center gap-2">
                   <Activity className="w-4 h-4 text-white/30" />
-                  Mood System
+                  {t('agent.mood.system')}
                 </h3>
                 <div className="space-y-3">
                   {Object.entries(MOOD_CONFIG).map(([key, config]) => (
@@ -232,7 +234,7 @@ const AgentDashboard = () => {
                   ))}
                 </div>
                 <p className="text-[10px] text-white/15 mt-4">
-                  Mood affects: trading aggression, position size, tweet tone
+                  {t('agent.mood.affects')}
                 </p>
               </div>
 
@@ -240,15 +242,15 @@ const AgentDashboard = () => {
               <div className="card">
                 <h3 className="text-sm font-medium text-white mb-4 flex items-center gap-2">
                   <Zap className="w-4 h-4 text-white/30" />
-                  Available Tools
+                  {t('agent.tools')}
                 </h3>
                 <div className="space-y-2">
                   {[
-                    { name: 'check_price', desc: 'Read token price & supply' },
-                    { name: 'check_balance', desc: 'Query wallet & treasury' },
-                    { name: 'open_trade', desc: 'Execute leveraged position' },
-                    { name: 'generate_tweet', desc: 'Create content' },
-                    { name: 'wait', desc: 'Skip this cycle' },
+                    { name: 'check_price', desc: t('agent.tool.check_price') },
+                    { name: 'check_balance', desc: t('agent.tool.check_balance') },
+                    { name: 'open_trade', desc: t('agent.tool.open_trade') },
+                    { name: 'generate_tweet', desc: t('agent.tool.generate_tweet') },
+                    { name: 'wait', desc: t('agent.tool.wait') },
                   ].map(tool => (
                     <div key={tool.name} className="flex items-center justify-between py-1.5">
                       <span className="text-xs font-mono text-white/50">{tool.name}</span>
@@ -262,7 +264,7 @@ const AgentDashboard = () => {
               <div className="card border-blue-500/10">
                 <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-blue-400" />
-                  Architecture
+                  {t('agent.architecture')}
                 </h3>
                 <ol className="space-y-2 text-xs text-white/40 list-decimal list-inside">
                   <li>Backend agent runs continuously (Node.js)</li>

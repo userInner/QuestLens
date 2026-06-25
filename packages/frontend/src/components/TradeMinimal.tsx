@@ -3,6 +3,7 @@ import { ArrowUpRight, ArrowDownRight, Wallet, Settings, ChevronDown, Check, Ext
 import { useTrade } from '../hooks/useTrade'
 import { useWallet } from '../hooks/useWallet'
 import { BondingCurve } from '../services/contract'
+import { useT } from '../i18n'
 
 interface TradeMinimalProps {
   currentPrice: number
@@ -23,6 +24,7 @@ const TradeMinimal = ({
   const [amount, setAmount] = useState('')
   const [showSettings, setShowSettings] = useState(false)
   const [slippage, setSlippage] = useState(1)
+  const t = useT()
 
   const { isConnected, balance: walletBalance } = useWallet()
   const { isLoading, txHash, error, success, buyTokens, sellTokens, reset } = useTrade()
@@ -76,7 +78,7 @@ const TradeMinimal = ({
     <div className="card">
       {/* Header */}
       <div className="flex items-center justify-between mb-8">
-        <h3 className="text-lg font-medium text-white">Trade</h3>
+        <h3 className="text-lg font-medium text-white">{t('trade.title')}</h3>
         <button
           className="p-2 text-white/30 hover:text-white/60 transition-colors"
           onClick={() => setShowSettings(!showSettings)}
@@ -96,7 +98,7 @@ const TradeMinimal = ({
           }`}
         >
           <ArrowUpRight className="w-4 h-4" />
-          Buy
+          {t('trade.buy')}
         </button>
         <button
           onClick={() => { setMode('sell'); setAmount(''); reset() }}
@@ -107,7 +109,7 @@ const TradeMinimal = ({
           }`}
         >
           <ArrowDownRight className="w-4 h-4" />
-          Sell
+          {t('trade.sell')}
         </button>
       </div>
 
@@ -115,7 +117,7 @@ const TradeMinimal = ({
       <div className="mb-4">
         <div className="flex items-center justify-between mb-2">
           <label className="text-xs text-white/40 uppercase tracking-wider">
-            {mode === 'buy' ? 'You Pay' : 'You Sell'}
+            {mode === 'buy' ? t('trade.you.pay') : t('trade.you.sell')}
           </label>
           <span className="text-xs text-white/30 flex items-center gap-1">
             <Wallet className="w-3 h-3" />
@@ -140,7 +142,7 @@ const TradeMinimal = ({
         {insufficientBalance && amount && (
           <p className="text-xs text-rose-400 mt-1 flex items-center gap-1">
             <AlertCircle className="w-3 h-3" />
-            Insufficient balance
+            {t('trade.insufficient')}
           </p>
         )}
       </div>
@@ -164,7 +166,7 @@ const TradeMinimal = ({
 
       {/* Estimate */}
       <div className="flex items-center justify-between py-4 border-t border-b border-white/5 mb-6">
-        <span className="text-sm text-white/40">You will receive</span>
+        <span className="text-sm text-white/40">{t('trade.receive')}</span>
         <span className="text-lg font-mono text-white">
           {estimatedOutput} <span className="text-white/40 text-sm">{mode === 'buy' ? symbol : 'INJ'}</span>
         </span>
@@ -174,7 +176,7 @@ const TradeMinimal = ({
       {showSettings && (
         <div className="mb-6 p-4 bg-white/5 rounded-lg space-y-4">
           <div className="flex items-center justify-between">
-            <span className="text-sm text-white/40">Slippage Tolerance</span>
+            <span className="text-sm text-white/40">{t('trade.slippage')}</span>
             <div className="flex gap-1">
               {[0.5, 1, 2, 5].map((val) => (
                 <button
@@ -192,7 +194,7 @@ const TradeMinimal = ({
             </div>
           </div>
           <div className="flex items-center justify-between">
-            <span className="text-sm text-white/40">Price per token</span>
+            <span className="text-sm text-white/40">{t('trade.price.per.token')}</span>
             <span className="text-sm font-mono text-white/60">{currentPrice.toFixed(6)} INJ</span>
           </div>
         </div>
@@ -203,7 +205,7 @@ const TradeMinimal = ({
         <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm text-emerald-400">Transaction confirmed</span>
+            <span className="text-sm text-emerald-400">{t('trade.confirmed')}</span>
           </div>
           <a
             href={`https://testnet.explorer.injective.network/transaction/${txHash}`}
@@ -211,7 +213,7 @@ const TradeMinimal = ({
             rel="noopener noreferrer"
             className="text-xs text-emerald-400/60 hover:text-emerald-400 flex items-center gap-1"
           >
-            View <ExternalLink className="w-3 h-3" />
+            {t('common.view')} <ExternalLink className="w-3 h-3" />
           </a>
         </div>
       )}
@@ -234,12 +236,12 @@ const TradeMinimal = ({
         ) : !isConnected ? (
           <>
             <Wallet className="w-4 h-4" />
-            Connect Wallet
+            {t('trade.connect')}
           </>
         ) : (
           <>
             {mode === 'buy' ? <ArrowUpRight className="w-4 h-4" /> : <ArrowDownRight className="w-4 h-4" />}
-            {mode === 'buy' ? `Buy ${symbol}` : `Sell ${symbol}`}
+            {mode === 'buy' ? `${t('trade.buy')} ${symbol}` : `${t('trade.sell')} ${symbol}`}
           </>
         )}
       </button>

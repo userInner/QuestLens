@@ -4,6 +4,7 @@ import { ethers } from 'ethers'
 import { CONTRACT_ADDRESSES, IDOL_TOKEN_ABI, isContractDeployed } from '../services/contract'
 import { useWalletStore } from '../store/useWalletStore'
 import { useIdolToken } from '../hooks/useIdolToken'
+import { useT } from '../i18n'
 
 /**
  * Claim Dividends component — allows holders to claim accumulated profits
@@ -12,6 +13,7 @@ const ClaimDividends = () => {
   const [isClaiming, setIsClaiming] = useState(false)
   const [txHash, setTxHash] = useState<string | null>(null)
   const [error, setError] = useState<string | null>(null)
+  const t = useT()
 
   const { isConnected } = useWalletStore()
   const { userDividends, userBalance, symbol, refetch } = useIdolToken()
@@ -70,23 +72,23 @@ const ClaimDividends = () => {
       <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-2">
           <Gift className="w-4 h-4 text-emerald-400" />
-          <h3 className="text-sm font-medium text-white">Dividends</h3>
+          <h3 className="text-sm font-medium text-white">{t('claim.title')}</h3>
         </div>
         {hasDividends && (
           <span className="px-2 py-0.5 text-[10px] font-medium bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">
-            Claimable
+            {t('claim.claimable')}
           </span>
         )}
       </div>
 
       {/* Unclaimed amount */}
       <div className="mb-4">
-        <p className="text-xs text-white/30 mb-1">Unclaimed Rewards</p>
+        <p className="text-xs text-white/30 mb-1">{t('claim.unclaimed')}</p>
         <p className="text-2xl font-mono text-white">
           {userDividends.toFixed(6)} <span className="text-sm text-white/40">INJ</span>
         </p>
         <p className="text-xs text-white/30 mt-1">
-          From holding {userBalance} {symbol} tokens
+          {t('claim.from')} {userBalance} {symbol} {t('claim.tokens')}
         </p>
       </div>
 
@@ -95,7 +97,7 @@ const ClaimDividends = () => {
         <div className="mb-4 p-3 rounded-lg bg-emerald-500/10 border border-emerald-500/20 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <Check className="w-4 h-4 text-emerald-400" />
-            <span className="text-sm text-emerald-400">Claimed!</span>
+            <span className="text-sm text-emerald-400">{t('claim.success')}</span>
           </div>
           <a
             href={`https://testnet.blockscout.injective.network/tx/${txHash}`}
@@ -103,7 +105,7 @@ const ClaimDividends = () => {
             rel="noopener noreferrer"
             className="text-xs text-emerald-400/60 hover:text-emerald-400 flex items-center gap-1"
           >
-            View <ExternalLink className="w-3 h-3" />
+            {t('common.view')} <ExternalLink className="w-3 h-3" />
           </a>
         </div>
       )}
@@ -125,23 +127,23 @@ const ClaimDividends = () => {
         {isClaiming ? (
           <>
             <Loader2 className="w-4 h-4 animate-spin" />
-            Claiming...
+            {t('claim.btn.claiming')}
           </>
         ) : hasDividends ? (
           <>
             <Gift className="w-4 h-4" />
-            Claim {userDividends.toFixed(4)} INJ
+            {t('claim.btn.claim')} {userDividends.toFixed(4)} INJ
           </>
         ) : (
           <>
             <Gift className="w-4 h-4" />
-            No rewards yet
+            {t('claim.btn.empty')}
           </>
         )}
       </button>
 
       <p className="text-[10px] text-white/20 text-center mt-3">
-        Dividends accumulate from AI agent trading profits (50% to holders)
+        {t('claim.note')}
       </p>
     </div>
   )

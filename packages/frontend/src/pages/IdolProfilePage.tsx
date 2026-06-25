@@ -5,6 +5,7 @@ import Header from '../components/Header'
 import PureBackground from '../components/PureBackground'
 import { useIdolToken } from '../hooks/useIdolToken'
 import { useAgentIdentity } from '../hooks/useAgentIdentity'
+import { useT } from '../i18n'
 
 // ─── Roles the idol can "perform" ──────────────────────────────────────
 interface Role {
@@ -16,45 +17,6 @@ interface Role {
   startDate: string
   performance: string
 }
-
-const VIVIAN_ROLES: Role[] = [
-  {
-    id: 'trader',
-    title: 'DeFi Trader',
-    genre: 'Finance',
-    status: 'active',
-    description: 'Trading perpetual futures on Injective DEX. Managing community treasury with AI-driven strategies.',
-    startDate: '2024-06',
-    performance: '+12.4% PnL',
-  },
-  {
-    id: 'analyst',
-    title: 'Market Analyst',
-    genre: 'Research',
-    status: 'active',
-    description: 'Publishing daily market commentary. Analyzing on-chain data and sharing alpha.',
-    startDate: '2024-06',
-    performance: '47 analysis posts',
-  },
-  {
-    id: 'memer',
-    title: 'Meme Creator',
-    genre: 'Entertainment',
-    status: 'active',
-    description: 'Creating crypto memes and shitposting. Building community culture through humor.',
-    startDate: '2024-06',
-    performance: '2.1K interactions',
-  },
-  {
-    id: 'mentor',
-    title: 'DeFi Educator',
-    genre: 'Education',
-    status: 'upcoming',
-    description: 'Teaching newcomers about bonding curves, leverage, and on-chain trading.',
-    startDate: 'Coming Soon',
-    performance: 'Q3 2024',
-  },
-]
 
 // ─── Timeline content (auto-generated daily life) ──────────────────────
 interface TimelinePost {
@@ -141,6 +103,46 @@ const IdolProfilePage = () => {
   const [activeTab, setActiveTab] = useState<'timeline' | 'roles' | 'stats'>('timeline')
   const { currentPrice, totalSupply, treasuryValue, holderCount, userBalance } = useIdolToken()
   const agentIdentity = useAgentIdentity('0xD418D85734e92B521119AAb41e15134AC13bce9b')
+  const t = useT()
+
+  const VIVIAN_ROLES: Role[] = [
+    {
+      id: 'trader',
+      title: t('profile.role.trader'),
+      genre: 'Finance',
+      status: 'active',
+      description: t('profile.role.trader.desc'),
+      startDate: '2024-06',
+      performance: '+12.4% PnL',
+    },
+    {
+      id: 'analyst',
+      title: t('profile.role.analyst'),
+      genre: 'Research',
+      status: 'active',
+      description: t('profile.role.analyst.desc'),
+      startDate: '2024-06',
+      performance: '47 analysis posts',
+    },
+    {
+      id: 'memer',
+      title: t('profile.role.memer'),
+      genre: 'Entertainment',
+      status: 'active',
+      description: t('profile.role.memer.desc'),
+      startDate: '2024-06',
+      performance: '2.1K interactions',
+    },
+    {
+      id: 'mentor',
+      title: t('profile.role.mentor'),
+      genre: 'Education',
+      status: 'upcoming',
+      description: t('profile.role.mentor.desc'),
+      startDate: 'Coming Soon',
+      performance: 'Q3 2024',
+    },
+  ]
 
   const timeline = useMemo(
     () => generateTimeline(currentPrice, totalSupply, treasuryValue, holderCount),
@@ -189,8 +191,7 @@ const IdolProfilePage = () => {
                 </div>
                 <p className="text-sm text-white/40 mb-3">@vivian_ai · Autonomous AI trading idol on Injective</p>
                 <p className="text-sm text-white/60 leading-relaxed">
-                  叛逆系 AI 交易员。白天看 K 线，晚上发 meme。用 Bonding Curve 养粉丝，用 Treasury 赚收益。
-                  不保证盈利，但保证有趣。🏴‍☠️
+                  {t('profile.bio')}
                 </p>
               </div>
 
@@ -200,9 +201,9 @@ const IdolProfilePage = () => {
                   to="/"
                   className="px-6 py-2.5 bg-white text-black text-sm font-medium rounded-lg hover:bg-white/90 transition-colors"
                 >
-                  Buy $VIVIAN
+                  {t('profile.buy')}
                 </Link>
-                <span className="text-xs text-white/30">= Follow + Invest</span>
+                <span className="text-xs text-white/30">{t('profile.buy.note')}</span>
               </div>
             </div>
 
@@ -210,19 +211,19 @@ const IdolProfilePage = () => {
             <div className="grid grid-cols-4 gap-4 mt-6 pt-6 border-t border-white/5">
               <div className="text-center">
                 <p className="text-xl font-mono text-white">{holderCount}</p>
-                <p className="text-xs text-white/30">粉丝 (Holders)</p>
+                <p className="text-xs text-white/30">{t('profile.stats.fans')}</p>
               </div>
               <div className="text-center">
                 <p className="text-xl font-mono text-white">{totalSupply}</p>
-                <p className="text-xs text-white/30">代币供应</p>
+                <p className="text-xs text-white/30">{t('profile.stats.supply')}</p>
               </div>
               <div className="text-center">
                 <p className="text-xl font-mono text-emerald-400">{treasuryValue.toFixed(2)}</p>
-                <p className="text-xs text-white/30">Treasury (INJ)</p>
+                <p className="text-xs text-white/30">{t('profile.stats.treasury')}</p>
               </div>
               <div className="text-center">
                 <p className="text-xl font-mono text-white">{VIVIAN_ROLES.filter(r => r.status === 'active').length}</p>
-                <p className="text-xs text-white/30">当前角色</p>
+                <p className="text-xs text-white/30">{t('profile.stats.roles')}</p>
               </div>
             </div>
           </div>
@@ -230,9 +231,9 @@ const IdolProfilePage = () => {
           {/* ─── Tabs ────────────────────────────────────────────────── */}
           <div className="flex gap-1 mb-6 p-1 bg-white/5 rounded-lg">
             {[
-              { id: 'timeline', label: '动态', icon: MessageSquare },
-              { id: 'roles', label: '角色', icon: Star },
-              { id: 'stats', label: '数据', icon: TrendingUp },
+              { id: 'timeline', label: t('profile.tab.timeline'), icon: MessageSquare },
+              { id: 'roles', label: t('profile.tab.roles'), icon: Star },
+              { id: 'stats', label: t('profile.tab.stats'), icon: TrendingUp },
             ].map(tab => (
               <button
                 key={tab.id}
@@ -304,7 +305,7 @@ const IdolProfilePage = () => {
           {activeTab === 'roles' && (
             <div className="space-y-4">
               <p className="text-sm text-white/40 mb-6">
-                Vivian 同时扮演多个角色。就像现实演员一样，她在不同"作品"中展现不同面向，但始终是同一个人。
+                {t('profile.roles.desc')}
               </p>
               {VIVIAN_ROLES.map(role => (
                 <div key={role.id} className={`card hover:border-white/10 transition-colors ${role.status === 'active' ? 'border-emerald-500/10' : ''}`}>
@@ -319,7 +320,7 @@ const IdolProfilePage = () => {
                             ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                             : 'bg-white/5 text-white/40 border-white/10'
                         }`}>
-                          {role.status === 'active' ? '● 进行中' : role.status === 'upcoming' ? '○ 即将上线' : '✓ 已完成'}
+                          {role.status === 'active' ? t('profile.roles.active') : role.status === 'upcoming' ? t('profile.roles.upcoming') : t('profile.roles.completed')}
                         </span>
                         <span className="text-xs text-white/20">{role.genre}</span>
                       </div>
@@ -335,9 +336,9 @@ const IdolProfilePage = () => {
               ))}
 
               <div className="text-center pt-8">
-                <p className="text-xs text-white/20 mb-3">更多角色由治理投票决定</p>
+                <p className="text-xs text-white/20 mb-3">{t('profile.roles.governance')}</p>
                 <Link to="/explore" className="text-xs text-emerald-400 hover:underline flex items-center justify-center gap-1">
-                  查看投票 <ExternalLink className="w-3 h-3" />
+                  {t('profile.roles.vote')} <ExternalLink className="w-3 h-3" />
                 </Link>
               </div>
             </div>
@@ -350,26 +351,26 @@ const IdolProfilePage = () => {
               <div className="card">
                 <h3 className="text-sm font-medium text-white mb-4 flex items-center gap-2">
                   <Sparkles className="w-4 h-4 text-emerald-400" />
-                  偶像数据面板
+                  {t('profile.stats.panel')}
                 </h3>
                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                   <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg">
-                    <p className="text-xs text-white/30 mb-1">代币价格</p>
+                    <p className="text-xs text-white/30 mb-1">{t('profile.stats.price')}</p>
                     <p className="text-lg font-mono text-white">{currentPrice.toFixed(6)}</p>
                     <p className="text-xs text-white/20">INJ</p>
                   </div>
                   <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg">
-                    <p className="text-xs text-white/30 mb-1">粉丝数</p>
+                    <p className="text-xs text-white/30 mb-1">{t('profile.stats.holders')}</p>
                     <p className="text-lg font-mono text-white">{holderCount}</p>
                     <p className="text-xs text-white/20">holders</p>
                   </div>
                   <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg">
-                    <p className="text-xs text-white/30 mb-1">Treasury</p>
+                    <p className="text-xs text-white/30 mb-1">{t('profile.stats.treasury.label')}</p>
                     <p className="text-lg font-mono text-emerald-400">{treasuryValue.toFixed(2)}</p>
                     <p className="text-xs text-white/20">INJ</p>
                   </div>
                   <div className="p-3 bg-white/[0.02] border border-white/5 rounded-lg">
-                    <p className="text-xs text-white/30 mb-1">你的持仓</p>
+                    <p className="text-xs text-white/30 mb-1">{t('profile.stats.your.holdings')}</p>
                     <p className="text-lg font-mono text-white">{userBalance}</p>
                     <p className="text-xs text-white/20">$VIVIAN</p>
                   </div>
@@ -378,26 +379,26 @@ const IdolProfilePage = () => {
 
               {/* Identity */}
               <div className="card">
-                <h3 className="text-sm font-medium text-white mb-4">链上身份 (ERC-8004)</h3>
+                <h3 className="text-sm font-medium text-white mb-4">{t('profile.identity.title')}</h3>
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between py-2 border-b border-white/5">
-                    <span className="text-white/40">Agent ID</span>
+                    <span className="text-white/40">{t('profile.identity.agentId')}</span>
                     <span className="text-white font-mono">#{agentIdentity.agentId}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-white/5">
-                    <span className="text-white/40">Model</span>
+                    <span className="text-white/40">{t('profile.identity.model')}</span>
                     <span className="text-white/70">{agentIdentity.modelProvider}/{agentIdentity.modelId}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-white/5">
-                    <span className="text-white/40">Capabilities</span>
+                    <span className="text-white/40">{t('profile.identity.capabilities')}</span>
                     <span className="text-white/70">{agentIdentity.capabilities.join(', ')}</span>
                   </div>
                   <div className="flex justify-between py-2 border-b border-white/5">
-                    <span className="text-white/40">Status</span>
+                    <span className="text-white/40">{t('profile.identity.status')}</span>
                     <span className="text-emerald-400">● Active</span>
                   </div>
                   <div className="flex justify-between py-2">
-                    <span className="text-white/40">Network</span>
+                    <span className="text-white/40">{t('profile.identity.network')}</span>
                     <span className="text-white/50">Injective EVM Testnet (1439)</span>
                   </div>
                 </div>
@@ -407,13 +408,13 @@ const IdolProfilePage = () => {
               <div className="card">
                 <h3 className="text-sm font-medium text-white mb-4 flex items-center gap-2">
                   <Users className="w-4 h-4 text-white/30" />
-                  粉丝等级
+                  {t('profile.fan.tiers')}
                 </h3>
                 <div className="space-y-3">
                   {[
-                    { tier: '白嫖粉', requirement: '0 tokens', perks: '看动态、围观', color: 'text-white/40' },
-                    { tier: '铁粉', requirement: '100+ tokens', perks: '专属频道、投票权', color: 'text-blue-400' },
-                    { tier: '榜一大哥', requirement: '1000+ tokens', perks: '月度语音会、提前知道决策', color: 'text-yellow-400' },
+                    { tier: t('profile.fan.free'), requirement: t('profile.fan.free.req'), perks: t('profile.fan.free.perks'), color: 'text-white/40' },
+                    { tier: t('profile.fan.iron'), requirement: t('profile.fan.iron.req'), perks: t('profile.fan.iron.perks'), color: 'text-blue-400' },
+                    { tier: t('profile.fan.top'), requirement: t('profile.fan.top.req'), perks: t('profile.fan.top.perks'), color: 'text-yellow-400' },
                   ].map(item => (
                     <div key={item.tier} className="flex items-center justify-between py-2 px-3 bg-white/[0.02] rounded-lg border border-white/5">
                       <div>

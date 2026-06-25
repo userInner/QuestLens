@@ -8,6 +8,7 @@ import ClaimDividends from '../components/ClaimDividends'
 import { useWallet } from '../hooks/useWallet'
 import { useIdolToken } from '../hooks/useIdolToken'
 import { CONTRACT_ADDRESSES, IDOL_TOKEN_ABI, getReadProvider, formatInj, isContractDeployed } from '../services/contract'
+import { useT } from '../i18n'
 
 interface UserTrade {
   type: 'buy' | 'sell'
@@ -23,6 +24,7 @@ const PortfolioPage = () => {
   const [trades, setTrades] = useState<UserTrade[]>([])
   const [isLoadingTrades, setIsLoadingTrades] = useState(true)
   const [copied, setCopied] = useState(false)
+  const t = useT()
 
   // Calculate portfolio value
   const holdingValue = userBalance * currentPrice
@@ -109,24 +111,24 @@ const PortfolioPage = () => {
           <div className="mb-12">
             <div className="flex items-center gap-3 mb-4">
               <div className="w-12 h-px bg-white/20" />
-              <span className="text-sm text-white/40 uppercase tracking-[0.2em]">Account</span>
+              <span className="text-sm text-white/40 uppercase tracking-[0.2em]">{t('portfolio.label')}</span>
             </div>
-            <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">Portfolio</h1>
-            <p className="text-lg text-white/40 mt-4">Your holdings, earnings, and trade history.</p>
+            <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">{t('portfolio.title')}</h1>
+            <p className="text-lg text-white/40 mt-4">{t('portfolio.subtitle')}</p>
           </div>
 
           {!isConnected ? (
             /* Not connected state */
             <div className="card text-center py-16">
               <Wallet className="w-12 h-12 text-white/20 mx-auto mb-4" />
-              <h3 className="text-xl font-medium text-white mb-2">Connect Wallet</h3>
-              <p className="text-white/40 mb-6">Connect your wallet to view your portfolio</p>
+              <h3 className="text-xl font-medium text-white mb-2">{t('portfolio.connect.title')}</h3>
+              <p className="text-white/40 mb-6">{t('portfolio.connect.desc')}</p>
               <button
                 onClick={() => window.dispatchEvent(new CustomEvent('open-wallet-modal'))}
                 className="inline-flex items-center gap-2 px-6 py-3 bg-white text-black font-medium rounded-lg hover:bg-white/90 transition-colors"
               >
                 <Wallet className="w-4 h-4" />
-                Connect Wallet
+                {t('portfolio.connect.btn')}
               </button>
             </div>
           ) : (
@@ -139,7 +141,7 @@ const PortfolioPage = () => {
                       <Wallet className="w-5 h-5 text-white/60" />
                     </div>
                     <div>
-                      <p className="text-sm text-white/40">Connected Wallet</p>
+                      <p className="text-sm text-white/40">{t('portfolio.wallet.connected')}</p>
                       <div className="flex items-center gap-2">
                         <span className="font-mono text-white">{ethereumAddress?.slice(0, 12)}...{ethereumAddress?.slice(-6)}</span>
                         <button onClick={copyAddress} className="text-white/30 hover:text-white/50 transition-colors">
@@ -149,7 +151,7 @@ const PortfolioPage = () => {
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-sm text-white/40">INJ Balance</p>
+                    <p className="text-sm text-white/40">{t('portfolio.wallet.inj.balance')}</p>
                     <p className="text-xl font-mono text-white">{parseFloat(walletBalance).toFixed(4)} INJ</p>
                   </div>
                 </div>
@@ -160,15 +162,15 @@ const PortfolioPage = () => {
                 <div className="card">
                   <div className="flex items-center gap-2 mb-2">
                     <Activity className="w-3.5 h-3.5 text-white/20" />
-                    <span className="text-xs text-white/30 uppercase tracking-wider">Holdings</span>
+                    <span className="text-xs text-white/30 uppercase tracking-wider">{t('portfolio.stats.holdings')}</span>
                   </div>
                   <p className="text-2xl font-mono text-white">{userBalance}</p>
-                  <p className="text-xs text-white/30 mt-1">{symbol} tokens</p>
+                  <p className="text-xs text-white/30 mt-1">{symbol} {t('common.tokens').toLowerCase()}</p>
                 </div>
                 <div className="card">
                   <div className="flex items-center gap-2 mb-2">
                     <TrendingUp className="w-3.5 h-3.5 text-white/20" />
-                    <span className="text-xs text-white/30 uppercase tracking-wider">Value</span>
+                    <span className="text-xs text-white/30 uppercase tracking-wider">{t('portfolio.stats.value')}</span>
                   </div>
                   <p className="text-2xl font-mono text-white">{holdingValue.toFixed(4)}</p>
                   <p className="text-xs text-white/30 mt-1">INJ</p>
@@ -176,18 +178,18 @@ const PortfolioPage = () => {
                 <div className="card">
                   <div className="flex items-center gap-2 mb-2">
                     <Gift className="w-3.5 h-3.5 text-emerald-400/50" />
-                    <span className="text-xs text-white/30 uppercase tracking-wider">Dividends</span>
+                    <span className="text-xs text-white/30 uppercase tracking-wider">{t('portfolio.stats.dividends')}</span>
                   </div>
                   <p className="text-2xl font-mono text-emerald-400">{userDividends.toFixed(4)}</p>
-                  <p className="text-xs text-white/30 mt-1">INJ claimable</p>
+                  <p className="text-xs text-white/30 mt-1">{t('portfolio.stats.dividends.claimable')}</p>
                 </div>
                 <div className="card">
                   <div className="flex items-center gap-2 mb-2">
                     <Activity className="w-3.5 h-3.5 text-white/20" />
-                    <span className="text-xs text-white/30 uppercase tracking-wider">Pool Share</span>
+                    <span className="text-xs text-white/30 uppercase tracking-wider">{t('portfolio.stats.share')}</span>
                   </div>
                   <p className="text-2xl font-mono text-white">{portfolioShare.toFixed(1)}%</p>
-                  <p className="text-xs text-white/30 mt-1">of total supply</p>
+                  <p className="text-xs text-white/30 mt-1">{t('portfolio.stats.share.desc')}</p>
                 </div>
               </div>
 
@@ -197,18 +199,18 @@ const PortfolioPage = () => {
                 <div className="lg:col-span-2">
                   <div className="card">
                     <div className="flex items-center justify-between mb-6">
-                      <h3 className="text-lg font-medium text-white">Your Trades</h3>
-                      <span className="text-xs text-white/30">{trades.length} transactions</span>
+                      <h3 className="text-lg font-medium text-white">{t('portfolio.trades.title')}</h3>
+                      <span className="text-xs text-white/30">{trades.length} {t('portfolio.trades.transactions')}</span>
                     </div>
 
                     {isLoadingTrades ? (
-                      <div className="text-center py-8 text-white/30">Loading your trades...</div>
+                      <div className="text-center py-8 text-white/30">{t('portfolio.trades.loading')}</div>
                     ) : trades.length === 0 ? (
                       <div className="text-center py-12">
                         <Activity className="w-8 h-8 text-white/10 mx-auto mb-3" />
-                        <p className="text-white/40 mb-4">No trades yet</p>
+                        <p className="text-white/40 mb-4">{t('portfolio.trades.empty')}</p>
                         <Link to="/" className="inline-flex items-center gap-2 px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-white/90 transition-colors">
-                          Buy {symbol}
+                          {t('trade.buy')} {symbol}
                         </Link>
                       </div>
                     ) : (
@@ -226,7 +228,7 @@ const PortfolioPage = () => {
                               </div>
                               <div>
                                 <p className="text-sm text-white font-medium">
-                                  {trade.type === 'buy' ? 'Bought' : 'Sold'} {trade.amount} {symbol}
+                                  {trade.type === 'buy' ? t('portfolio.trades.bought') : t('portfolio.trades.sold')} {trade.amount} {symbol}
                                 </p>
                                 <p className="text-xs text-white/30">Block #{trade.block}</p>
                               </div>
@@ -255,15 +257,15 @@ const PortfolioPage = () => {
                     {trades.length > 0 && (
                       <div className="mt-6 pt-6 border-t border-white/5 grid grid-cols-3 gap-4">
                         <div>
-                          <p className="text-xs text-white/30 mb-1">Total Spent</p>
+                          <p className="text-xs text-white/30 mb-1">{t('portfolio.trades.total.spent')}</p>
                           <p className="font-mono text-sm text-rose-400">{totalSpent.toFixed(4)} INJ</p>
                         </div>
                         <div>
-                          <p className="text-xs text-white/30 mb-1">Total Received</p>
+                          <p className="text-xs text-white/30 mb-1">{t('portfolio.trades.total.received')}</p>
                           <p className="font-mono text-sm text-emerald-400">{totalReceived.toFixed(4)} INJ</p>
                         </div>
                         <div>
-                          <p className="text-xs text-white/30 mb-1">Unrealized Value</p>
+                          <p className="text-xs text-white/30 mb-1">{t('portfolio.trades.unrealized')}</p>
                           <p className="font-mono text-sm text-white">{holdingValue.toFixed(4)} INJ</p>
                         </div>
                       </div>
@@ -277,33 +279,33 @@ const PortfolioPage = () => {
 
                   {/* Holdings card */}
                   <div className="card">
-                    <h3 className="text-sm font-medium text-white mb-4">Position Details</h3>
+                    <h3 className="text-sm font-medium text-white mb-4">{t('portfolio.position.title')}</h3>
                     <div className="space-y-3">
                       <div className="flex justify-between text-sm">
-                        <span className="text-white/40">Token</span>
+                        <span className="text-white/40">{t('portfolio.position.token')}</span>
                         <Link to={`/idol/${CONTRACT_ADDRESSES.idolToken}`} className="text-white hover:text-emerald-400 transition-colors font-mono flex items-center gap-1">
                           ${symbol} <ExternalLink className="w-3 h-3" />
                         </Link>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-white/40">Current Price</span>
+                        <span className="text-white/40">{t('portfolio.position.price')}</span>
                         <span className="text-white font-mono">{currentPrice.toFixed(6)} INJ</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-white/40">Your Balance</span>
-                        <span className="text-white font-mono">{userBalance} tokens</span>
+                        <span className="text-white/40">{t('portfolio.position.balance')}</span>
+                        <span className="text-white font-mono">{userBalance} {t('common.tokens').toLowerCase()}</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-white/40">Pool Share</span>
+                        <span className="text-white/40">{t('portfolio.position.share')}</span>
                         <span className="text-white font-mono">{portfolioShare.toFixed(2)}%</span>
                       </div>
                       <div className="flex justify-between text-sm">
-                        <span className="text-white/40">Treasury</span>
+                        <span className="text-white/40">{t('portfolio.position.treasury')}</span>
                         <span className="text-white font-mono">{treasuryValue.toFixed(2)} INJ</span>
                       </div>
                       <div className="flex justify-between text-sm pt-3 border-t border-white/5">
-                        <span className="text-white/40">Network</span>
-                        <span className="text-white/60 text-xs">Injective EVM Testnet</span>
+                        <span className="text-white/40">{t('portfolio.position.network')}</span>
+                        <span className="text-white/60 text-xs">{t('portfolio.position.network.value')}</span>
                       </div>
                     </div>
                   </div>
