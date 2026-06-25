@@ -9,6 +9,7 @@ const DocsPage = lazy(() => import('./pages/DocsPage'))
 const IdolDetailPage = lazy(() => import('./pages/IdolDetailPage'))
 const PortfolioPage = lazy(() => import('./pages/PortfolioPage'))
 const AgentDashboard = lazy(() => import('./pages/AgentDashboard'))
+const IdolProfilePage = lazy(() => import('./pages/IdolProfilePage'))
 
 // Skeleton loader for pages
 const PageLoader = () => (
@@ -72,6 +73,14 @@ function App() {
           element={
             <Suspense fallback={<PageLoader />}>
               <AgentDashboard />
+            </Suspense>
+          } 
+        />
+        <Route 
+          path="/vivian" 
+          element={
+            <Suspense fallback={<PageLoader />}>
+              <IdolProfilePage />
             </Suspense>
           } 
         />
