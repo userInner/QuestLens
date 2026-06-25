@@ -1,10 +1,9 @@
 import { useState, useEffect, useRef } from 'react'
-import { Brain, Zap, MessageSquare, TrendingUp, Activity, Clock, RefreshCw, Play, Square, AlertCircle } from 'lucide-react'
+import { Brain, Zap, MessageSquare, TrendingUp, Activity, Clock, RefreshCw, AlertCircle } from 'lucide-react'
 import Header from '../components/Header'
 import PureBackground from '../components/PureBackground'
 import { useAgentIdentity } from '../hooks/useAgentIdentity'
 import { useIdolToken } from '../hooks/useIdolToken'
-import { BondingCurve } from '../services/contract'
 
 // Mood definitions
 const MOOD_CONFIG: Record<string, { emoji: string; color: string; label: string }> = {
@@ -17,160 +16,52 @@ const MOOD_CONFIG: Record<string, { emoji: string; color: string; label: string 
   bored: { emoji: '😴', color: 'text-gray-400', label: 'Bored' },
 }
 
-interface AgentAction {
+interface AgentLogEntry {
   id: number
   timestamp: number
-  type: 'think' | 'tool_call' | 'result' | 'tweet' | 'mood_change'
+  type: 'think' | 'tool_call' | 'result' | 'tweet' | 'mood_change' | 'identity'
   content: string
-  metadata?: Record<string, unknown>
+  mood?: string
+  moodIntensity?: number
 }
 
 const AgentDashboard = () => {
-  const [isRunning, setIsRunning] = useState(false)
+  const [actions, setActions] = useState<AgentLogEntry[]>([])
   const [currentMood, setCurrentMood] = useState('neutral')
   const [moodIntensity, setMoodIntensity] = useState(50)
-  const [actions, setActions] = useState<AgentAction[]>([])
-  const [cycleCount, setCycleCount] = useState(0)
-  const [isThinking, setIsThinking] = useState(false)
+  const [isLive, setIsLive] = useState(false)
+  const [lastUpdate, setLastUpdate] = useState<number>(0)
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null)
-  const actionIdRef = useRef(0)
 
   const agentIdentity = useAgentIdentity('0xD418D85734e92B521119AAb41e15134AC13bce9b')
   const { currentPrice, totalSupply, treasuryValue, holderCount } = useIdolToken()
 
-  // Simulate agent cycle
-  const runAgentCycle = async () => {
-    setIsThinking(true)
-    setCycleCount(prev => prev + 1)
+  // Poll the agent log file written by the backend agent process
+  const fetchLog = async () => {
+    try {
+      const res = await fetch('/agent-log.json?t=' + Date.now())
+      if (!res.ok) return
+      const entries: AgentLogEntry[] = await res.json()
 
-    // Step 1: Think
-    addAction('think', `🧠 Evaluating market conditions... (Mood: ${currentMood}, Intensity: ${moodIntensity}%)`)
-    await delay(1500)
+      if (entries.length > 0) {
+        setActions(entries)
+        const latest = entries[0]
+        if (latest.mood) setCurrentMood(latest.mood)
+        if (latest.moodIntensity) setMoodIntensity(latest.moodIntensity)
+        setLastUpdate(latest.timestamp)
 
-    // Step 2: Check price (tool call)
-    addAction('tool_call', `🔧 check_price() → ${currentPrice.toFixed(6)} INJ | Supply: ${totalSupply} | Treasury: ${treasuryValue.toFixed(2)} INJ`)
-    await delay(1000)
-
-    // Step 3: AI decision
-    const decision = simulateDecision()
-    addAction('result', decision.message)
-    await delay(1000)
-
-    // Step 4: Maybe execute trade
-    if (decision.shouldTrade) {
-      addAction('tool_call', `🔧 open_trade({direction: "${decision.direction}", amount: "${decision.amount} INJ", leverage: "${decision.leverage}x"})`)
-      await delay(1500)
-      addAction('result', `✅ Trade executed: ${decision.direction} ${decision.amount} INJ @ ${decision.leverage}x`)
-
-      // Mood change on trade
-      const newMood = decision.direction === 'LONG' ? 'excited' : 'rebellious'
-      setCurrentMood(newMood)
-      setMoodIntensity(70)
-      addAction('mood_change', `Mood shifted: ${currentMood} → ${newMood} (trade execution)`)
-    }
-
-    // Step 5: Generate tweet
-    await delay(800)
-    const tweet = generateTweet(decision)
-    addAction('tweet', `🐦 "${tweet}"`)
-
-    setIsThinking(false)
-  }
-
-  // Simulate AI decision based on current state
-  function simulateDecision() {
-    const volatility = Math.random()
-    const moodFactor = currentMood === 'euphoric' || currentMood === 'rebellious' ? 0.7 : 0.3
-
-    if (volatility > (1 - moodFactor) && treasuryValue > 0.5) {
-      const direction = Math.random() > 0.4 ? 'LONG' : 'SHORT'
-      const leverage = Math.min(5, Math.floor(Math.random() * 3) + 2)
-      const sizePercent = Math.floor(Math.random() * 15) + 5
-      const amount = (treasuryValue * sizePercent / 100).toFixed(4)
-      return {
-        shouldTrade: true,
-        direction,
-        leverage,
-        amount,
-        message: `📊 Decision: OPEN ${direction} — Confidence: ${Math.floor(60 + Math.random() * 30)}% | Reasoning: "${direction === 'LONG' ? 'Bullish momentum, bonding curve supply increasing' : 'Overextended, taking contrarian position'}"`,
+        // Check if agent is "live" (last entry within 60s)
+        setIsLive(Date.now() - latest.timestamp < 60000)
       }
-    }
-
-    // Decide to wait
-    const reasons = [
-      'Market too flat, no clear signal. Patience is alpha.',
-      'Confidence below threshold (55%). Waiting for better setup.',
-      'Already exposed. Risk management says chill.',
-      'Low volatility environment. Not worth the gas.',
-    ]
-    const reason = reasons[Math.floor(Math.random() * reasons.length)]
-
-    // Maybe get bored
-    if (cycleCount > 3 && currentMood === 'neutral') {
-      setCurrentMood('bored')
-      setMoodIntensity(60)
-    }
-
-    return {
-      shouldTrade: false,
-      direction: null,
-      leverage: 0,
-      amount: '0',
-      message: `⏳ Decision: WAIT — "${reason}"`,
+    } catch {
+      // Log file doesn't exist yet — agent hasn't run
     }
   }
 
-  // Generate contextual tweet
-  function generateTweet(decision: { shouldTrade: boolean; direction: string | null; amount: string }) {
-    const mood = MOOD_CONFIG[currentMood]
-    if (decision.shouldTrade) {
-      const templates = [
-        `just went ${decision.direction} on INJ with ${decision.amount} from treasury. ${mood.emoji} let's see how this plays out`,
-        `${decision.direction} ${decision.amount} INJ. confidence is high. ${mood.emoji} the curve doesn't lie.`,
-        `executed a ${decision.direction} position. ${decision.amount} INJ on the line. manage risk, print alpha. ${mood.emoji}`,
-      ]
-      return templates[Math.floor(Math.random() * templates.length)]
-    }
-    const waitTemplates = [
-      `checked the charts. nothing worth aping into rn. treasury at ${treasuryValue.toFixed(2)} INJ. ${mood.emoji} patience mode.`,
-      `${totalSupply} tokens, ${holderCount} holders. small but mighty. ${mood.emoji} waiting for the right moment.`,
-      `market giving nothing today. ${mood.emoji} sometimes the best trade is no trade.`,
-    ]
-    return waitTemplates[Math.floor(Math.random() * waitTemplates.length)]
-  }
-
-  function addAction(type: AgentAction['type'], content: string) {
-    const action: AgentAction = {
-      id: ++actionIdRef.current,
-      timestamp: Date.now(),
-      type,
-      content,
-    }
-    setActions(prev => [action, ...prev].slice(0, 50)) // Keep last 50
-  }
-
-  function delay(ms: number) {
-    return new Promise(resolve => setTimeout(resolve, ms))
-  }
-
-  // Auto-run loop
-  const startAgent = () => {
-    setIsRunning(true)
-    addAction('think', '🎭 Agent started — entering autonomous loop')
-    runAgentCycle()
-    intervalRef.current = setInterval(runAgentCycle, 15000) // Every 15s
-  }
-
-  const stopAgent = () => {
-    setIsRunning(false)
-    if (intervalRef.current) {
-      clearInterval(intervalRef.current)
-      intervalRef.current = null
-    }
-    addAction('think', '⏹️ Agent stopped')
-  }
-
+  // Start polling on mount
   useEffect(() => {
+    fetchLog()
+    intervalRef.current = setInterval(fetchLog, 3000) // Poll every 3s
     return () => {
       if (intervalRef.current) clearInterval(intervalRef.current)
     }
@@ -194,29 +85,35 @@ const AgentDashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <h1 className="text-5xl md:text-6xl font-semibold text-white tracking-tight">Agent Dashboard</h1>
-                <p className="text-lg text-white/40 mt-4">Watch Vivian think, decide, and act in real-time.</p>
+                <p className="text-lg text-white/40 mt-4">Real-time view of Vivian's autonomous decision-making.</p>
               </div>
               <div className="flex items-center gap-3">
-                {!isRunning ? (
-                  <button
-                    onClick={startAgent}
-                    className="flex items-center gap-2 px-6 py-3 bg-emerald-500 text-black font-medium rounded-lg hover:bg-emerald-400 transition-colors"
-                  >
-                    <Play className="w-4 h-4" />
-                    Start Agent
-                  </button>
-                ) : (
-                  <button
-                    onClick={stopAgent}
-                    className="flex items-center gap-2 px-6 py-3 bg-rose-500 text-black font-medium rounded-lg hover:bg-rose-400 transition-colors"
-                  >
-                    <Square className="w-4 h-4" />
-                    Stop
-                  </button>
-                )}
+                <div className={`flex items-center gap-2 px-4 py-2 rounded-lg border ${isLive ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/10 bg-white/[0.02]'}`}>
+                  <div className={`w-2.5 h-2.5 rounded-full ${isLive ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'}`} />
+                  <span className={`text-sm font-medium ${isLive ? 'text-emerald-400' : 'text-white/40'}`}>
+                    {isLive ? 'Agent Running' : 'Agent Offline'}
+                  </span>
+                </div>
               </div>
             </div>
           </div>
+
+          {/* Info banner if agent not running */}
+          {!isLive && actions.length === 0 && (
+            <div className="mb-8 p-4 rounded-lg border border-blue-500/20 bg-blue-500/5">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="w-5 h-5 text-blue-400 mt-0.5 shrink-0" />
+                <div>
+                  <p className="text-sm text-white/70 font-medium mb-1">Agent is not running</p>
+                  <p className="text-xs text-white/40">Start the agent backend to see real-time autonomous behavior:</p>
+                  <code className="block mt-2 text-xs text-emerald-400 bg-black/30 px-3 py-2 rounded font-mono">
+                    cd packages/agent && npx tsx src/index.ts loop
+                  </code>
+                  <p className="text-xs text-white/30 mt-2">The agent will continuously think, trade, and generate content. This dashboard polls its activity log every 3 seconds.</p>
+                </div>
+              </div>
+            </div>
+          )}
 
           {/* Stats + Mood row */}
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
@@ -235,16 +132,16 @@ const AgentDashboard = () => {
             <div className="card">
               <p className="text-xs text-white/30 uppercase tracking-wider mb-2">Status</p>
               <div className="flex items-center gap-2">
-                <div className={`w-2.5 h-2.5 rounded-full ${isRunning ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'}`} />
-                <span className={`text-sm font-medium ${isRunning ? 'text-emerald-400' : 'text-white/40'}`}>
-                  {isThinking ? 'Thinking...' : isRunning ? 'Active' : 'Stopped'}
+                <div className={`w-2.5 h-2.5 rounded-full ${isLive ? 'bg-emerald-500 animate-pulse' : 'bg-white/20'}`} />
+                <span className={`text-sm font-medium ${isLive ? 'text-emerald-400' : 'text-white/40'}`}>
+                  {isLive ? 'Active' : 'Offline'}
                 </span>
               </div>
             </div>
-            {/* Cycles */}
+            {/* Actions */}
             <div className="card">
-              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">Cycles</p>
-              <p className="text-xl font-mono text-white">{cycleCount}</p>
+              <p className="text-xs text-white/30 uppercase tracking-wider mb-2">Actions</p>
+              <p className="text-xl font-mono text-white">{actions.length}</p>
             </div>
             {/* Identity */}
             <div className="card">
@@ -260,25 +157,27 @@ const AgentDashboard = () => {
             </div>
           </div>
 
-          {/* Main content: Action log + Side info */}
+          {/* Main content */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Action Log */}
             <div className="lg:col-span-2 card max-h-[600px] overflow-hidden flex flex-col">
               <div className="flex items-center justify-between mb-6 shrink-0">
                 <div className="flex items-center gap-2">
                   <Brain className="w-4 h-4 text-blue-400" />
-                  <h3 className="text-lg font-medium text-white">Agent Thought Process</h3>
-                  {isThinking && <RefreshCw className="w-3.5 h-3.5 text-blue-400 animate-spin" />}
+                  <h3 className="text-lg font-medium text-white">Agent Activity Log</h3>
+                  {isLive && <RefreshCw className="w-3.5 h-3.5 text-blue-400 animate-spin" />}
                 </div>
-                <span className="text-xs text-white/20">{actions.length} events</span>
+                <span className="text-xs text-white/20">
+                  {lastUpdate ? `Updated ${Math.floor((Date.now() - lastUpdate) / 1000)}s ago` : 'No data'}
+                </span>
               </div>
 
-              <div className="flex-1 overflow-y-auto space-y-2 pr-2 scrollbar-thin">
+              <div className="flex-1 overflow-y-auto space-y-2 pr-2">
                 {actions.length === 0 ? (
                   <div className="text-center py-16">
                     <Brain className="w-10 h-10 text-white/10 mx-auto mb-3" />
-                    <p className="text-white/30">Click "Start Agent" to begin autonomous operation</p>
-                    <p className="text-xs text-white/20 mt-2">Agent will check markets, make decisions, and generate content</p>
+                    <p className="text-white/30">Waiting for agent activity...</p>
+                    <p className="text-xs text-white/20 mt-2">Run the agent backend to see real-time decisions</p>
                   </div>
                 ) : (
                   actions.map((action) => (
@@ -303,7 +202,7 @@ const AgentDashboard = () => {
 
             {/* Side panel */}
             <div className="space-y-6">
-              {/* Mood History */}
+              {/* Mood System */}
               <div className="card">
                 <h3 className="text-sm font-medium text-white mb-4 flex items-center gap-2">
                   <Activity className="w-4 h-4 text-white/30" />
@@ -337,7 +236,7 @@ const AgentDashboard = () => {
                 </p>
               </div>
 
-              {/* Tools Available */}
+              {/* Tools */}
               <div className="card">
                 <h3 className="text-sm font-medium text-white mb-4 flex items-center gap-2">
                   <Zap className="w-4 h-4 text-white/30" />
@@ -359,22 +258,24 @@ const AgentDashboard = () => {
                 </div>
               </div>
 
-              {/* How it works */}
+              {/* Architecture */}
               <div className="card border-blue-500/10">
                 <h3 className="text-sm font-medium text-white mb-3 flex items-center gap-2">
                   <AlertCircle className="w-4 h-4 text-blue-400" />
-                  How It Works
+                  Architecture
                 </h3>
                 <ol className="space-y-2 text-xs text-white/40 list-decimal list-inside">
-                  <li>Agent reads market data from chain</li>
-                  <li>DeepSeek AI evaluates with function_call</li>
-                  <li>Mood system adjusts risk appetite</li>
-                  <li>Tool executed (trade / wait / tweet)</li>
-                  <li>Results update mood → next cycle</li>
+                  <li>Backend agent runs continuously (Node.js)</li>
+                  <li>DeepSeek AI decides next action (function_call)</li>
+                  <li>Tool executed on-chain via ethers.js</li>
+                  <li>Results written to log file</li>
+                  <li>This dashboard polls log every 3s</li>
                 </ol>
-                <p className="text-[10px] text-white/20 mt-3">
-                  In production: runs `npx tsx src/index.ts loop` with real DeepSeek API
-                </p>
+                <div className="mt-3 pt-3 border-t border-white/5">
+                  <p className="text-[10px] text-white/20">
+                    Backend: <code className="text-emerald-400/60">packages/agent/src/index.ts</code>
+                  </p>
+                </div>
               </div>
             </div>
           </div>
@@ -385,18 +286,19 @@ const AgentDashboard = () => {
 }
 
 // Helper functions
-function getActionStyle(type: AgentAction['type']): string {
+function getActionStyle(type: AgentLogEntry['type']): string {
   switch (type) {
     case 'think': return 'bg-blue-500/5 border-blue-500/10'
     case 'tool_call': return 'bg-purple-500/5 border-purple-500/10'
     case 'result': return 'bg-emerald-500/5 border-emerald-500/10'
     case 'tweet': return 'bg-sky-500/5 border-sky-500/10'
     case 'mood_change': return 'bg-orange-500/5 border-orange-500/10'
+    case 'identity': return 'bg-indigo-500/5 border-indigo-500/10'
     default: return 'bg-white/[0.02] border-white/5'
   }
 }
 
-function getActionIcon(type: AgentAction['type']) {
+function getActionIcon(type: AgentLogEntry['type']) {
   const cls = "w-4 h-4 shrink-0 mt-0.5"
   switch (type) {
     case 'think': return <Brain className={`${cls} text-blue-400`} />
@@ -404,6 +306,7 @@ function getActionIcon(type: AgentAction['type']) {
     case 'result': return <TrendingUp className={`${cls} text-emerald-400`} />
     case 'tweet': return <MessageSquare className={`${cls} text-sky-400`} />
     case 'mood_change': return <Activity className={`${cls} text-orange-400`} />
+    case 'identity': return <Brain className={`${cls} text-indigo-400`} />
     default: return <Clock className={`${cls} text-white/30`} />
   }
 }

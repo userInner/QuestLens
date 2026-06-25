@@ -15,6 +15,7 @@ import { AIService } from '../services/ai.js';
 import { MoodSystem, Mood } from './mood.js';
 import { ToolRegistry, ToolResult } from './tools.js';
 import { verifyAgentIdentity, AgentIdentity } from './identity.js';
+import { writeAgentLog } from './logger-file.js';
 import { logger } from '../utils/logger.js';
 
 interface AgentMemory {
@@ -68,6 +69,9 @@ export class AgentLoop {
     logger.info('═══════════════════════════════════════');
     logger.info('');
 
+    // Write cycle start to log file (for frontend)
+    writeAgentLog({ type: 'think', content: `🎭 Cycle started — Mood: ${this.mood.mood} (${this.mood.intensity}%)`, mood: this.mood.mood, moodIntensity: this.mood.intensity });
+
     // 1. Check idle time for mood update
     const minutesIdle = (Date.now() - (this.memory.lastTradeTime || Date.now())) / 60000;
     this.mood.onIdle(minutesIdle);
@@ -78,15 +82,30 @@ export class AgentLoop {
 
     // 3. Ask AI to decide next action
     logger.info('🧠 Thinking...');
+    writeAgentLog({ type: 'think', content: '🧠 Asking DeepSeek AI for next action...', mood: this.mood.mood, moodIntensity: this.mood.intensity });
     const decision = await this.callWithTools(systemPrompt, tools);
 
     if (!decision) {
       logger.info('   No decision made (AI did not call a tool)');
+      writeAgentLog({ type: 'result', content: '⏳ No action taken this cycle', mood: this.mood.mood, moodIntensity: this.mood.intensity });
       return;
     }
 
+    // Log the tool call
+    writeAgentLog({ type: 'tool_call', content: `🔧 ${decision.toolName}(${JSON.stringify(decision.args)})`, mood: this.mood.mood, moodIntensity: this.mood.intensity });
+
     // 4. Execute the chosen tool
     const result = await this.tools.execute(decision.toolName, decision.args);
+
+    // Log the result
+    writeAgentLog({
+      type: 'result',
+      content: result.success
+        ? `✅ ${decision.toolName} → ${JSON.stringify(result.data).slice(0, 200)}`
+        : `❌ ${decision.toolName} failed: ${result.error}`,
+      mood: this.mood.mood,
+      moodIntensity: this.mood.intensity,
+    });
 
     // 5. Record action in memory
     this.memory.recentActions.push({
@@ -104,7 +123,8 @@ export class AgentLoop {
     if (decision.toolName === 'open_trade' && result.success) {
       this.memory.lastTradeTime = Date.now();
       this.memory.tradesThisCycle++;
-      this.mood.onTradeResult(0.01, 1); // Optimistic mood bump on trade execution
+      this.mood.onTradeResult(0.01, 1);
+      writeAgentLog({ type: 'mood_change', content: `Mood: ${this.mood.mood} → excited (trade executed)`, mood: this.mood.mood, moodIntensity: this.mood.intensity });
     }
 
     // 7. Generate a tweet about what happened
@@ -112,6 +132,7 @@ export class AgentLoop {
     logger.info('📝 Generating tweet about this action...');
     const tweet = await this.generateContextualTweet(decision.toolName, result);
     logger.info(`   🐦 "${tweet}"`);
+    writeAgentLog({ type: 'tweet', content: `🐦 "${tweet}"`, mood: this.mood.mood, moodIntensity: this.mood.intensity });
 
     logger.info('');
     logger.info(`   Mood after cycle: ${this.mood.mood} (${this.mood.intensity}%)`);
