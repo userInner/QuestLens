@@ -228,6 +228,60 @@ const IdolDetailPage = () => {
             ))}
           </div>
 
+          {/* ─── Licensing Rights (持币使用权) ─── */}
+          <div className="card mb-10 border-emerald-500/10">
+            <div className="flex items-center justify-between mb-4">
+              <h3 className="text-sm font-medium text-white flex items-center gap-2">
+                🎬 形象使用权 (Licensing)
+              </h3>
+              <span className="text-[10px] text-white/30">基于持币比例自动授权</span>
+            </div>
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.1 ? 'border-emerald-500/30 bg-emerald-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-emerald-400">Basic</span>
+                  <span className="text-xs text-white/30 font-mono">≥ 10%</span>
+                </div>
+                <p className="text-sm text-white/60">社区内容创作权</p>
+                <p className="text-[10px] text-white/30 mt-1">粉丝二创、表情包、社区活动</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.2 ? 'border-blue-500/30 bg-blue-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-blue-400">Standard</span>
+                  <span className="text-xs text-white/30 font-mono">≥ 20%</span>
+                </div>
+                <p className="text-sm text-white/60">商业 AI 短剧使用权</p>
+                <p className="text-[10px] text-white/30 mt-1">用该形象参演商业内容、综艺</p>
+              </div>
+              <div className={`p-4 rounded-xl border ${userBalance > 0 && totalSupply > 0 && (userBalance / totalSupply) >= 0.5 ? 'border-purple-500/30 bg-purple-500/5' : 'border-white/5 bg-white/[0.02]'}`}>
+                <div className="flex items-center justify-between mb-2">
+                  <span className="text-xs font-medium text-purple-400">Exclusive</span>
+                  <span className="text-xs text-white/30 font-mono">≥ 50%</span>
+                </div>
+                <p className="text-sm text-white/60">独家使用权</p>
+                <p className="text-[10px] text-white/30 mt-1">限定期限内独占该形象商业权益</p>
+              </div>
+            </div>
+            {userBalance > 0 && totalSupply > 0 && (
+              <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
+                <span className="text-xs text-white/40">
+                  你的持仓: {userBalance} / {totalSupply} ({((userBalance / totalSupply) * 100).toFixed(1)}%)
+                </span>
+                <span className={`text-xs font-medium ${
+                  (userBalance / totalSupply) >= 0.5 ? 'text-purple-400' :
+                  (userBalance / totalSupply) >= 0.2 ? 'text-blue-400' :
+                  (userBalance / totalSupply) >= 0.1 ? 'text-emerald-400' :
+                  'text-white/30'
+                }`}>
+                  {(userBalance / totalSupply) >= 0.5 ? '✅ Exclusive 权限' :
+                   (userBalance / totalSupply) >= 0.2 ? '✅ Standard 权限' :
+                   (userBalance / totalSupply) >= 0.1 ? '✅ Basic 权限' :
+                   '⬆️ 增持到 10% 解锁使用权'}
+                </span>
+              </div>
+            )}
+          </div>
+
           {/* Main content grid */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Left: Chart + Trade History */}
