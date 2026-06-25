@@ -77,7 +77,7 @@ export function useTrade(tokenAddress?: string) {
       // In production, calculate minTokensOut from getBuyCost()
       const minTokensOut = BigInt(0)
 
-      const tx = await contract.buyTokens(minTokensOut, { value, gasLimit: 500000 })
+      const tx = await contract.buyTokens(minTokensOut, { value, gasLimit: 200000 })
       const receipt = await tx.wait()
 
       setState({ isLoading: false, txHash: receipt.hash, error: null, success: true })
@@ -126,7 +126,7 @@ export function useTrade(tokenAddress?: string) {
       // minRefund = 0 for MVP (simplified slippage)
       const minRefund = BigInt(0)
 
-      const tx = await contract.sellTokens(amount, minRefund, { gasLimit: 500000 })
+      const tx = await contract.sellTokens(amount, minRefund, { gasLimit: 200000 })
       const receipt = await tx.wait()
 
       setState({ isLoading: false, txHash: receipt.hash, error: null, success: true })

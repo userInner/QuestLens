@@ -177,19 +177,19 @@ export const WALLET_OPTIONS = [
   {
     id: Wallet.Keplr as WalletType,
     name: 'Keplr',
-    icon: 'https://assets.leapwallet.io/keplr-logo.svg',
+    icon: '/metamask.svg', // Fallback — replace with local keplr icon
     description: 'Cosmos ecosystem wallet',
   },
   {
     id: Wallet.Leap as WalletType,
     name: 'Leap',
-    icon: 'https://assets.leapwallet.io/leap-cosmos-logo.svg',
+    icon: '/metamask.svg', // Fallback — replace with local leap icon
     description: 'Multi-chain Cosmos wallet',
   },
   {
     id: Wallet.Metamask as WalletType,
     name: 'MetaMask',
-    icon: 'https://upload.wikimedia.org/wikipedia/commons/3/36/MetaMask_Fox.svg',
+    icon: '/metamask.svg',
     description: 'EVM wallet',
   },
 ] as const
