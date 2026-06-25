@@ -32,6 +32,9 @@ const IdolDetailPage = () => {
   const [tradeHistory, setTradeHistory] = useState<TradeEvent[]>([])
   const [tweets, setTweets] = useState<AgentTweet[]>([])
   const [isLoadingHistory, setIsLoadingHistory] = useState(true)
+  const [isRequestingLicense, setIsRequestingLicense] = useState(false)
+  const [licenseGranted, setLicenseGranted] = useState(false)
+  const [licenseId, setLicenseId] = useState(0)
 
   const {
     name, symbol, currentPrice, totalSupply,
@@ -46,6 +49,23 @@ const IdolDetailPage = () => {
     await navigator.clipboard.writeText(tokenAddress)
     setCopied(true)
     setTimeout(() => setCopied(false), 2000)
+  }
+
+  // Request license (demo: simulates contract call)
+  const handleRequestLicense = async () => {
+    setIsRequestingLicense(true)
+    try {
+      // In production: call IdolLicensing.requestLicense(token, tier, "short_drama", 30)
+      // For demo: simulate success after delay
+      await new Promise(resolve => setTimeout(resolve, 2000))
+      const id = Math.floor(Math.random() * 1000) + 1
+      setLicenseId(id)
+      setLicenseGranted(true)
+    } catch (err) {
+      console.error('License request failed:', err)
+    } finally {
+      setIsRequestingLicense(false)
+    }
   }
 
   // Fetch on-chain trade history
@@ -232,7 +252,7 @@ const IdolDetailPage = () => {
           <div className="card mb-10 border-emerald-500/10">
             <div className="flex items-center justify-between mb-4">
               <h3 className="text-sm font-medium text-white flex items-center gap-2">
-                🎬 形象使用权 (Licensing)
+                形象使用权 Licensing
               </h3>
               <span className="text-[10px] text-white/30">基于持币比例自动授权</span>
             </div>
@@ -263,21 +283,69 @@ const IdolDetailPage = () => {
               </div>
             </div>
             {userBalance > 0 && totalSupply > 0 && (
-              <div className="mt-4 pt-4 border-t border-white/5 flex items-center justify-between">
-                <span className="text-xs text-white/40">
-                  你的持仓: {userBalance} / {totalSupply} ({((userBalance / totalSupply) * 100).toFixed(1)}%)
-                </span>
-                <span className={`text-xs font-medium ${
-                  (userBalance / totalSupply) >= 0.5 ? 'text-purple-400' :
-                  (userBalance / totalSupply) >= 0.2 ? 'text-blue-400' :
-                  (userBalance / totalSupply) >= 0.1 ? 'text-emerald-400' :
-                  'text-white/30'
-                }`}>
-                  {(userBalance / totalSupply) >= 0.5 ? '✅ Exclusive 权限' :
-                   (userBalance / totalSupply) >= 0.2 ? '✅ Standard 权限' :
-                   (userBalance / totalSupply) >= 0.1 ? '✅ Basic 权限' :
-                   '⬆️ 增持到 10% 解锁使用权'}
-                </span>
+              <div className="mt-4 pt-4 border-t border-white/5">
+                <div className="flex items-center justify-between mb-4">
+                  <span className="text-xs text-white/40">
+                    你的持仓: {userBalance} / {totalSupply} ({((userBalance / totalSupply) * 100).toFixed(1)}%)
+                  </span>
+                  <span className={`text-xs font-medium ${
+                    (userBalance / totalSupply) >= 0.5 ? 'text-purple-400' :
+                    (userBalance / totalSupply) >= 0.2 ? 'text-blue-400' :
+                    (userBalance / totalSupply) >= 0.1 ? 'text-emerald-400' :
+                    'text-white/30'
+                  }`}>
+                    {(userBalance / totalSupply) >= 0.5 ? 'Exclusive 权限已解锁' :
+                     (userBalance / totalSupply) >= 0.2 ? 'Standard 权限已解锁' :
+                     (userBalance / totalSupply) >= 0.1 ? 'Basic 权限已解锁' :
+                     '增持到 10% 解锁使用权'}
+                  </span>
+                </div>
+
+                {/* 申请使用权按钮 */}
+                {(userBalance / totalSupply) >= 0.1 && (
+                  <div className="p-4 bg-white/[0.02] border border-white/5 rounded-xl">
+                    <div className="flex items-center justify-between mb-3">
+                      <div>
+                        <p className="text-sm text-white font-medium">申请商业使用授权</p>
+                        <p className="text-xs text-white/30 mt-0.5">获得链上许可证，用于 AI 短剧制作</p>
+                      </div>
+                      <button
+                        onClick={handleRequestLicense}
+                        disabled={isRequestingLicense}
+                        className="px-4 py-2 bg-white text-black text-sm font-medium rounded-lg hover:bg-white/90 transition-colors disabled:opacity-50"
+                      >
+                        {isRequestingLicense ? 'Requesting...' : '申请 License'}
+                      </button>
+                    </div>
+
+                    {licenseGranted && (
+                      <div className="p-3 bg-emerald-500/5 border border-emerald-500/20 rounded-lg">
+                        <p className="text-xs text-emerald-400 font-medium mb-1">License 已授权</p>
+                        <p className="text-[10px] text-white/40">
+                          License ID: #{licenseId} | 有效期: 30 天 | 类型: {(userBalance / totalSupply) >= 0.5 ? 'Exclusive' : (userBalance / totalSupply) >= 0.2 ? 'Standard' : 'Basic'}
+                        </p>
+                        <p className="text-[10px] text-white/30 mt-2">
+                          你现在可以下载该偶像的形象资源，用于 AI 短剧内容制作。制作收入请打入 Treasury 合约地址。
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="mt-3 grid grid-cols-3 gap-2 text-center">
+                      <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
+                        <p className="text-[10px] text-white/30">流程</p>
+                        <p className="text-[10px] text-white/50 mt-1">申请 → 制作 → 上线 → 分润</p>
+                      </div>
+                      <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
+                        <p className="text-[10px] text-white/30">收入归属</p>
+                        <p className="text-[10px] text-white/50 mt-1">流入 Treasury，全员分红</p>
+                      </div>
+                      <div className="p-2 bg-white/[0.02] rounded-lg border border-white/5">
+                        <p className="text-[10px] text-white/30">失效条件</p>
+                        <p className="text-[10px] text-white/50 mt-1">持仓低于门槛自动撤销</p>
+                      </div>
+                    </div>
+                  </div>
+                )}
               </div>
             )}
           </div>
