@@ -3,6 +3,11 @@ pragma solidity ^0.8.20;
 
 import "@openzeppelin/access/Ownable.sol";
 
+interface IToken {
+    function balanceOf(address account) external view returns (uint256);
+    function totalSupply() external view returns (uint256);
+}
+
 /**
  * @title IdolLicensing
  * @notice Controls who can use an idol's likeness in AI content (short dramas, etc.)
@@ -44,12 +49,6 @@ contract IdolLicensing is Ownable {
 
     mapping(uint256 => LicenseGrant) public licenses;
     uint256 public nextLicenseId = 1;
-
-    // Token interface
-    interface IToken {
-        function balanceOf(address account) external view returns (uint256);
-        function totalSupply() external view returns (uint256);
-    }
 
     // ─── Events ──────────────────────────────────────────────────────────
     event LicenseGranted(
