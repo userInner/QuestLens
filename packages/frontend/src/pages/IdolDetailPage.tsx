@@ -153,43 +153,60 @@ const IdolDetailPage = () => {
       <main className="pt-24 pb-16 relative z-10">
         <div className="container">
           {/* Back nav */}
-          <Link to="/explore" className="inline-flex items-center gap-2 text-white/40 hover:text-white/60 transition-colors mb-8">
+          <Link to="/explore" className="inline-flex items-center gap-2 text-white/40 hover:text-white/60 transition-colors mb-6">
             <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">Back to Explore</span>
           </Link>
 
-          {/* Idol header */}
-          <div className="flex flex-col md:flex-row items-start md:items-center justify-between gap-6 mb-12">
-            <div className="flex items-center gap-5">
-              <div className="w-16 h-16 rounded-xl overflow-hidden border border-white/10">
-                <img src="/idols/vivian/avatar.png" alt={symbol} className="w-full h-full object-cover" />
-              </div>
-              <div>
-                <div className="flex items-center gap-3">
-                  <h1 className="text-3xl font-semibold text-white">{name?.replace(' Token', '') || 'Vivian'}</h1>
-                  <span className="px-2 py-0.5 text-xs font-medium bg-emerald-500/10 text-emerald-400 rounded border border-emerald-500/20">
-                    Active
-                  </span>
+          {/* ─── Hero Banner with large idol image ─── */}
+          <div className="relative rounded-2xl overflow-hidden mb-10 border border-white/5">
+            <div className="h-[320px] md:h-[400px] relative">
+              <img
+                src="/idols/vivian/avatar.png"
+                alt={name}
+                className="w-full h-full object-cover object-top"
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/40 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-r from-[#0a0a0a]/60 to-transparent" />
+
+              {/* Content overlay */}
+              <div className="absolute bottom-0 left-0 right-0 p-8">
+                <div className="flex items-end justify-between">
+                  <div>
+                    <div className="flex items-center gap-3 mb-2">
+                      <h1 className="text-4xl md:text-5xl font-bold text-white">{name?.replace(' Token', '') || 'Vivian'}</h1>
+                      <span className="px-3 py-1 text-xs font-medium bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30 backdrop-blur-sm">
+                        AI IDOL
+                      </span>
+                    </div>
+                    <div className="flex items-center gap-4">
+                      <span className="text-sm text-white/50 font-mono">${symbol}</span>
+                      <button onClick={copyAddress} className="flex items-center gap-1 text-xs text-white/30 hover:text-white/50 transition-colors bg-black/30 backdrop-blur-sm px-2 py-1 rounded">
+                        {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
+                        {tokenAddress.slice(0, 10)}...{tokenAddress.slice(-6)}
+                      </button>
+                    </div>
+                  </div>
+                  <a
+                    href={`https://testnet.blockscout.injective.network/address/${tokenAddress}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="hidden md:inline-flex items-center gap-2 px-4 py-2 bg-black/40 backdrop-blur-sm border border-white/10 rounded-lg text-sm text-white/60 hover:text-white/80 transition-colors"
+                  >
+                    <ExternalLink className="w-4 h-4" />
+                    Explorer
+                  </a>
                 </div>
-                <div className="flex items-center gap-3 mt-1">
-                  <span className="text-sm text-white/40 font-mono">${symbol}</span>
-                  <button onClick={copyAddress} className="flex items-center gap-1 text-xs text-white/30 hover:text-white/50 transition-colors">
-                    {copied ? <Check className="w-3 h-3 text-emerald-400" /> : <Copy className="w-3 h-3" />}
-                    {tokenAddress.slice(0, 8)}...{tokenAddress.slice(-6)}
-                  </button>
+              </div>
+
+              {/* Top badges */}
+              <div className="absolute top-6 right-6 flex items-center gap-2">
+                <div className="flex items-center gap-1.5 px-3 py-1.5 bg-black/60 backdrop-blur-sm rounded-full border border-white/10">
+                  <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                  <span className="text-xs text-emerald-400 font-medium">Live</span>
                 </div>
               </div>
             </div>
-
-            <a
-              href={`https://testnet.blockscout.injective.network/address/${tokenAddress}`}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="inline-flex items-center gap-2 px-4 py-2 border border-white/10 rounded-lg text-sm text-white/50 hover:text-white/70 hover:border-white/20 transition-colors"
-            >
-              <ExternalLink className="w-4 h-4" />
-              View on Explorer
-            </a>
           </div>
 
           {/* Stats row */}

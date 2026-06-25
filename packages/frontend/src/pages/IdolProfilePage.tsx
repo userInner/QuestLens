@@ -169,7 +169,7 @@ const IdolProfilePage = () => {
               {/* Avatar */}
               <div className="relative">
                 <div className="w-24 h-24 rounded-2xl border-2 border-white/10 overflow-hidden">
-                  <img src="/idols/vivian/avatar.png" alt="Vivian" className="w-full h-full object-cover" />
+                  <img src="/idols/vivian/avatar.png" alt="Vivian" className="w-full h-full object-cover object-top" />
                 </div>
                 <div className="absolute -bottom-1 -right-1 w-7 h-7 bg-emerald-500 rounded-full border-2 border-[#0a0a0a] flex items-center justify-center">
                   <Zap className="w-3.5 h-3.5 text-black" />
@@ -256,7 +256,7 @@ const IdolProfilePage = () => {
                   <div className="flex items-center justify-between mb-3">
                     <div className="flex items-center gap-3">
                       <div className="w-8 h-8 rounded-full overflow-hidden border border-white/10">
-                        <img src="/idols/vivian/avatar.png" alt="Vivian" className="w-full h-full object-cover" />
+                        <img src="/idols/vivian/avatar.png" alt="Vivian" className="w-full h-full object-cover object-top" />
                       </div>
                       <div>
                         <div className="flex items-center gap-2">

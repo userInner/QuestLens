@@ -29,7 +29,7 @@ const ExplorePage = () => {
     })
 
   // Aggregate stats
-  const totalHolders = idols.reduce((sum, i) => sum + i.holderCount, 0)
+  const totalHolders = idols.reduce((sum, i) => sum + (i.holderCount || 0), 0)
   const totalTVL = idols.reduce((sum, i) => sum + i.treasuryValue, 0)
 
   return (
@@ -101,9 +101,9 @@ const ExplorePage = () => {
             </div>
           )}
 
-          {/* Agents List */}
+          {/* Agents Grid — Large visual cards */}
           {!isLoading && (
-            <div className="space-y-2">
+            <div className="space-y-6">
               {filteredIdols.length === 0 ? (
                 <div className="text-center py-20">
                   <p className="text-white/40 mb-4">No agents found</p>
@@ -112,71 +112,68 @@ const ExplorePage = () => {
                   </Link>
                 </div>
               ) : (
-                filteredIdols.map((idol) => (
-                  <Link
-                    key={idol.id}
-                    to={`/idol/${idol.tokenAddress}`}
-                    className="group flex items-center gap-6 p-4 bg-white/[0.02] border border-white/5 rounded-lg hover:border-white/10 hover:bg-white/[0.04] transition-all"
-                  >
-                    {/* Rank */}
-                    <span className="text-xs text-white/20 font-mono w-8">#{idol.id}</span>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                  {filteredIdols.map((idol) => (
+                    <Link
+                      key={idol.id}
+                      to={`/idol/${idol.tokenAddress}`}
+                      className="group block rounded-2xl border border-white/5 overflow-hidden hover:border-white/15 transition-all hover:shadow-xl hover:shadow-emerald-500/5"
+                    >
+                      {/* Big image */}
+                      <div className="relative aspect-[3/4] overflow-hidden">
+                        <img
+                          src={`/idols/${idol.name.toLowerCase().replace(' token', '')}/avatar.png`}
+                          alt={idol.name}
+                          className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
+                          onError={(e) => {
+                            const el = e.target as HTMLImageElement
+                            el.style.display = 'none'
+                            el.parentElement!.classList.add('bg-gradient-to-br', 'from-emerald-500/10', 'to-blue-500/10', 'flex', 'items-center', 'justify-center')
+                            el.parentElement!.innerHTML = `<span class="text-6xl font-bold text-white/20">${idol.symbol.charAt(0)}</span>`
+                          }}
+                        />
+                        {/* Gradient overlay */}
+                        <div className="absolute inset-0 bg-gradient-to-t from-[#0a0a0a] via-[#0a0a0a]/20 to-transparent" />
 
-                    {/* Avatar */}
-                    <div className="w-12 h-12 rounded-lg overflow-hidden border border-white/10 shrink-0">
-                      <img
-                        src={`/idols/${idol.name.toLowerCase().replace(' token', '')}/avatar.png`}
-                        alt={idol.name}
-                        className="w-full h-full object-cover"
-                        onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; (e.target as HTMLImageElement).parentElement!.classList.add('bg-gradient-to-br', 'from-emerald-500/20', 'to-blue-500/20', 'flex', 'items-center', 'justify-center'); }}
-                      />
-                    </div>
+                        {/* Status badge */}
+                        <div className="absolute top-4 right-4 flex items-center gap-1.5 px-2.5 py-1 bg-black/60 backdrop-blur-sm rounded-full border border-white/10">
+                          <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
+                          <span className="text-[10px] text-emerald-400 font-medium">Active</span>
+                        </div>
 
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <div className="flex items-center gap-3">
-                        <h3 className="font-medium text-white">{idol.name.replace(' Token', '')}</h3>
-                        <span className="text-xs text-white/30 font-mono">${idol.symbol}</span>
-                        <span className="text-[10px] px-2 py-0.5 rounded bg-white/5 text-white/40 border border-white/10 capitalize">
-                          {idol.roleType}
-                        </span>
+                        {/* Name overlay */}
+                        <div className="absolute bottom-0 left-0 right-0 p-5">
+                          <div className="flex items-center gap-2 mb-1">
+                            <h3 className="text-2xl font-bold text-white">{idol.name.replace(' Token', '')}</h3>
+                            <span className="px-2 py-0.5 text-[10px] font-medium bg-emerald-500/20 text-emerald-400 rounded-full border border-emerald-500/30">
+                              AI IDOL
+                            </span>
+                          </div>
+                          <p className="text-sm text-white/50 font-mono">${idol.symbol}</p>
+                          <p className="text-xs text-white/40 mt-2 line-clamp-2">
+                            {idol.personality.description || idol.personality.traits?.join(', ') || 'Autonomous AI agent on Injective'}
+                          </p>
+                        </div>
                       </div>
-                      <p className="text-sm text-white/40 truncate mt-0.5">
-                        {idol.personality.description || idol.personality.traits?.join(', ') || 'Autonomous AI agent'}
-                      </p>
-                    </div>
 
-                    {/* Stats - Desktop */}
-                    <div className="hidden md:flex items-center gap-8">
-                      <div className="text-right">
-                        <p className="text-xs text-white/30 uppercase tracking-wider">Price</p>
-                        <p className="font-mono text-white">{idol.currentPrice.toFixed(6)}</p>
+                      {/* Stats footer */}
+                      <div className="grid grid-cols-3 divide-x divide-white/5 bg-[#0a0a0a]">
+                        <div className="p-3 text-center">
+                          <p className="text-sm font-mono text-white">{idol.currentPrice.toFixed(4)}</p>
+                          <p className="text-[10px] text-white/30">Price (INJ)</p>
+                        </div>
+                        <div className="p-3 text-center">
+                          <p className="text-sm font-mono text-white">{idol.holderCount}</p>
+                          <p className="text-[10px] text-white/30">Fans</p>
+                        </div>
+                        <div className="p-3 text-center">
+                          <p className="text-sm font-mono text-emerald-400">{idol.treasuryValue.toFixed(2)}</p>
+                          <p className="text-[10px] text-white/30">Treasury</p>
+                        </div>
                       </div>
-                      <div className="text-right">
-                        <p className="text-xs text-white/30 uppercase tracking-wider">Supply</p>
-                        <p className="font-mono text-white">{idol.totalSupply}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-white/30 uppercase tracking-wider flex items-center gap-1 justify-end">
-                          <Users className="w-3 h-3" />Holders
-                        </p>
-                        <p className="font-mono text-white">{idol.holderCount}</p>
-                      </div>
-                      <div className="text-right">
-                        <p className="text-xs text-white/30 uppercase tracking-wider flex items-center gap-1 justify-end">
-                          <Activity className="w-3 h-3" />Treasury
-                        </p>
-                        <p className="font-mono text-emerald-400">{idol.treasuryValue.toFixed(2)} INJ</p>
-                      </div>
-                    </div>
-
-                    {/* Arrow */}
-                    <div className="flex items-center">
-                      <button className="p-2 text-white/20 group-hover:text-white/60 transition-colors">
-                        <ArrowUpRight className="w-5 h-5" />
-                      </button>
-                    </div>
-                  </Link>
-                ))
+                    </Link>
+                  ))}
+                </div>
               )}
             </div>
           )}

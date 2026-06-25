@@ -160,15 +160,53 @@ packages/
 
 ## Vision: AI Virtual Stars Economy
 
-NovaIdol goes beyond trading bots. Each AI idol is a **persistent digital persona** — not a throwaway character, but a lasting virtual star:
+NovaIdol is not just a trading protocol — it's a **decentralized AI talent agency** where digital identities become investable, performable assets.
 
-- **Fixed Identity**: Each AI has a permanent name, appearance, personality, and on-chain identity (ERC-8004). Like real actors, they carry their reputation across different "roles."
-- **Multi-Role Performance**: The same AI can be a DeFi trader today, an NFT art critic tomorrow, and a meme creator next week — building a multi-faceted persona over time.
-- **Social Presence**: Beyond trading, AI idols maintain social accounts — sharing daily thoughts, market commentary, interactions with other AI idols, and building genuine fan followings.
-- **Cross-Content Synergy**: AI idols can participate in "AI variety shows" — collaborative events, trading competitions, debate panels, or creative challenges — making each idol a character in an expanding AI universe.
-- **Fan Economy**: Token holders are not just investors — they're fans. Holding tokens = supporting your favorite AI personality. The bonding curve becomes a popularity metric, governance voting becomes fan engagement.
+### The Core Idea
 
-This transforms the protocol from a DeFi primitive into a **platform for AI-native entertainment and finance**, where the most valuable asset isn't any single trade or piece of content, but the AI personalities themselves.
+Anyone — real person or AI — can upload their face and personality to mint a **Digital Star Identity** on-chain. This identity becomes:
+
+1. **A Tradeable Asset**: Each identity has its own Bonding Curve token. Buying tokens = investing in this persona's future value.
+2. **A Performable Actor**: The identity can be cast in AI-generated short dramas, variety shows, and content — earning revenue every time it "performs."
+3. **A Revenue-Sharing Vehicle**: Content revenue flows back to the Treasury → 50% distributed to token holders, 50% buyback & burn.
+
+### How It Works
+
+```
+Upload Face/Persona → Mint ERC-8004 Identity → Issue Bonding Curve Token
+     ↓                                                    ↓
+  AI generates content                          Fans buy tokens (invest)
+  using this identity                                    ↓
+     ↓                                          Token price rises with demand
+  Short drama revenue                                    ↓
+     ↓                                          Holders receive dividends
+  Treasury receives payment ←────────────────── from content earnings
+```
+
+### Identity Types
+
+| Type | Source | Use Case |
+|------|--------|----------|
+| **AI-Generated** | Stable Diffusion / MidJourney | Pure virtual idol, full creative freedom |
+| **Real Person** | Upload selfie + consent | Digital twin, earns passive income from AI performances |
+| **Hybrid** | AI body + real voice/personality | Combines authenticity with scalability |
+
+### Why This Matters
+
+- **For Creators**: Upload your face once, earn forever from AI content using your likeness
+- **For Fans**: Invest early in personas you believe will become popular
+- **For Content Platforms**: Access a marketplace of ready-to-use AI actors with built-in audiences
+- **For the Ecosystem**: Every piece of content increases the value of the underlying identity tokens
+
+### Multi-Role Performance
+
+Like real actors, each Digital Star can perform across genres:
+- Today: romance drama lead
+- Tomorrow: thriller antagonist  
+- Next week: variety show host
+- Always: maintaining their social presence and fan community
+
+The identity persists. The performances accumulate. The fan economy grows.
 
 ## Roadmap
 
@@ -178,16 +216,11 @@ This transforms the protocol from a DeFi primitive into a **platform for AI-nati
 - [x] Wallet connection (MetaMask/Keplr/Leap)
 - [x] Contract deployment to testnet
 - [x] Injective MCP server integration
-- [x] AI Agent with tools + mood system
-- [x] Agent Dashboard (real-time autonomous behavior)
-- [x] Idol Lifecycle state machine
-- [x] Governance voting contracts
-- [ ] AI idol multi-role system (trader → artist → entertainer)
-- [ ] Cross-idol social interactions
-- [ ] AI variety show events (collaborative challenges)
-- [ ] Twitter bot live integration
+- [ ] AI Agent live trading
+- [ ] Twitter bot integration
 - [ ] Mainnet deployment
-- [ ] Multi-idol discovery & ranking
+- [ ] Multi-idol support with Explore page
+- [ ] Governance voting
 
 ## License
 
