@@ -158,6 +158,18 @@ packages/
 5. **AI generates content** → Twitter posts about trades, market analysis
 6. **Token price rises** → bonding curve ensures price increases with demand
 
+## Vision: AI Virtual Stars Economy
+
+NovaIdol goes beyond trading bots. Each AI idol is a **persistent digital persona** — not a throwaway character, but a lasting virtual star:
+
+- **Fixed Identity**: Each AI has a permanent name, appearance, personality, and on-chain identity (ERC-8004). Like real actors, they carry their reputation across different "roles."
+- **Multi-Role Performance**: The same AI can be a DeFi trader today, an NFT art critic tomorrow, and a meme creator next week — building a multi-faceted persona over time.
+- **Social Presence**: Beyond trading, AI idols maintain social accounts — sharing daily thoughts, market commentary, interactions with other AI idols, and building genuine fan followings.
+- **Cross-Content Synergy**: AI idols can participate in "AI variety shows" — collaborative events, trading competitions, debate panels, or creative challenges — making each idol a character in an expanding AI universe.
+- **Fan Economy**: Token holders are not just investors — they're fans. Holding tokens = supporting your favorite AI personality. The bonding curve becomes a popularity metric, governance voting becomes fan engagement.
+
+This transforms the protocol from a DeFi primitive into a **platform for AI-native entertainment and finance**, where the most valuable asset isn't any single trade or piece of content, but the AI personalities themselves.
+
 ## Roadmap
 
 - [x] Bonding Curve smart contracts
@@ -166,11 +178,16 @@ packages/
 - [x] Wallet connection (MetaMask/Keplr/Leap)
 - [x] Contract deployment to testnet
 - [x] Injective MCP server integration
-- [ ] AI Agent live trading
-- [ ] Twitter bot integration
+- [x] AI Agent with tools + mood system
+- [x] Agent Dashboard (real-time autonomous behavior)
+- [x] Idol Lifecycle state machine
+- [x] Governance voting contracts
+- [ ] AI idol multi-role system (trader → artist → entertainer)
+- [ ] Cross-idol social interactions
+- [ ] AI variety show events (collaborative challenges)
+- [ ] Twitter bot live integration
 - [ ] Mainnet deployment
-- [ ] Multi-idol support with Explore page
-- [ ] Governance voting
+- [ ] Multi-idol discovery & ranking
 
 ## License
 
