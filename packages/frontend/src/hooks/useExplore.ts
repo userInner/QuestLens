@@ -14,7 +14,7 @@ export interface IdolListItem {
   name: string
   symbol: string
   roleType: string
-  personality: { traits?: string[]; trading_style?: string; description?: string }
+  personality: { traits?: string[]; trading_style?: string; description?: string; avatarBase64?: string }
   tokenAddress: string
   treasuryAddress: string
   agentAddress: string
@@ -96,7 +96,7 @@ export function useExplore() {
             currentPrice = Number(formatInj(priceWei))
             totalSupply = Number(supplyRaw)
             treasuryValue = Number(formatInj(stats.totalValue))
-            holderCount = Number(stats.holders)
+            holderCount = Number(stats.holders) || 0
           } catch {
             // Token data fetch failed, use defaults
           }

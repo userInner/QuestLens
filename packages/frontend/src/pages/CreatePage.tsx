@@ -51,19 +51,36 @@ const CreatePage = () => {
   const handleDeploy = async () => {
     if (!formData.name || !formData.symbol) return
 
-    // Build personality JSON with avatar URL
-    const personality = JSON.stringify({
+    // Build personality JSON with avatar
+    const personalityData: Record<string, unknown> = {
       traits: formData.personality,
       trading_style: formData.strategy,
       description: formData.description,
-      avatarUrl: formData.avatarPreview || `/idols/${formData.name.toLowerCase()}/avatar.png`,
-    })
+    }
+
+    // If image uploaded, save to local server → public/idols/{symbol}/avatar.png
+    if (formData.avatarFile) {
+      const base64 = await fileToBase64(formData.avatarFile)
+      personalityData.avatarUrl = `/idols/${formData.symbol.toLowerCase()}/avatar.png`
+      // Upload to local server
+      try {
+        await fetch('http://localhost:3456/api/upload/avatar', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ symbol: formData.symbol, imageBase64: base64 }),
+        })
+        console.log('Avatar saved to public/idols/' + formData.symbol.toLowerCase() + '/avatar.png')
+      } catch (e) {
+        console.warn('Upload server not running, saving to IndexedDB instead')
+        await saveAvatarToDb(formData.symbol.toLowerCase(), base64)
+      }
+    }
+
+    const personality = JSON.stringify(personalityData)
 
     // If image was uploaded, save it locally (demo mode)
     // In production: upload to IPFS via Pinata, get CID, store in personality JSON
     if (formData.avatarFile) {
-      // Demo: image preview is already shown via blob URL
-      // Production: would call pinata.pinFileToIPFS(file) here
       console.log('Image ready for IPFS upload:', formData.avatarFile.name)
     }
 
@@ -97,6 +114,31 @@ const CreatePage = () => {
   const removeImage = () => {
     if (formData.avatarPreview) URL.revokeObjectURL(formData.avatarPreview)
     setFormData(prev => ({ ...prev, avatarFile: null, avatarPreview: '' }))
+  }
+
+  // Convert File to base64 data URL
+  function fileToBase64(file: File): Promise<string> {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader()
+      reader.onload = () => resolve(reader.result as string)
+      reader.onerror = reject
+      reader.readAsDataURL(file)
+    })
+  }
+
+  // Save avatar to IndexedDB (no size limit unlike localStorage)
+  function saveAvatarToDb(symbol: string, base64: string): Promise<void> {
+    return new Promise((resolve, reject) => {
+      const req = indexedDB.open('novaidol-avatars', 1)
+      req.onupgradeneeded = () => { req.result.createObjectStore('avatars') }
+      req.onsuccess = () => {
+        const tx = req.result.transaction('avatars', 'readwrite')
+        tx.objectStore('avatars').put(base64, symbol)
+        tx.oncomplete = () => resolve()
+        tx.onerror = () => reject(tx.error)
+      }
+      req.onerror = () => reject(req.error)
+    })
   }
 
   const canProceedStep1 = formData.name.length > 0 && formData.symbol.length > 0 && formData.avatarPreview.length > 0

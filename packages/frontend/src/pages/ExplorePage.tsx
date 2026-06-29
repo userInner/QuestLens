@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { Link } from 'react-router-dom'
 import { Search, Filter, TrendingUp, ArrowUpRight, Loader2, Users, Activity } from 'lucide-react'
 import Header from '../components/Header'
@@ -12,6 +12,39 @@ const ExplorePage = () => {
   const t = useT()
 
   const { idols, isLoading } = useExplore()
+
+  // Get idol image: check IndexedDB first (newly created), then static file
+  const [avatarCache, setAvatarCache] = useState<Record<string, string>>({})
+
+  useEffect(() => {
+    // Load avatars from IndexedDB on mount
+    const req = indexedDB.open('novaidol-avatars', 1)
+    req.onupgradeneeded = () => { req.result.createObjectStore('avatars') }
+    req.onsuccess = () => {
+      const tx = req.result.transaction('avatars', 'readonly')
+      const store = tx.objectStore('avatars')
+      const getAll = store.getAll()
+      const getAllKeys = store.getAllKeys()
+      getAll.onsuccess = () => {
+        getAllKeys.onsuccess = () => {
+          const cache: Record<string, string> = {}
+          getAllKeys.result.forEach((key, i) => { cache[key as string] = getAll.result[i] })
+          setAvatarCache(cache)
+        }
+      }
+    }
+  }, [idols])
+
+  function getIdolImage(idol: { name: string; symbol: string; personality: { avatarBase64?: string } }): string {
+    const sym = idol.symbol.toLowerCase()
+    // 1. Check IndexedDB cache
+    if (avatarCache[sym]) return avatarCache[sym]
+    // 2. Check localStorage (legacy)
+    const stored = localStorage.getItem(`idol-avatar-${sym}`)
+    if (stored) return stored
+    // 3. Fallback to static file
+    return `/idols/${idol.name.toLowerCase().replace(' token', '')}/avatar.png`
+  }
 
   // Filter and sort
   const filteredIdols = idols
@@ -124,7 +157,7 @@ const ExplorePage = () => {
                       {/* Big image */}
                       <div className="relative aspect-[3/4] overflow-hidden">
                         <img
-                          src={`/idols/${idol.name.toLowerCase().replace(' token', '')}/avatar.png`}
+                          src={getIdolImage(idol)}
                           alt={idol.name}
                           className="w-full h-full object-cover object-top group-hover:scale-105 transition-transform duration-500"
                           onError={(e) => {
@@ -165,7 +198,7 @@ const ExplorePage = () => {
                           <p className="text-[10px] text-white/30">{t('explore.card.price')}</p>
                         </div>
                         <div className="p-3 text-center">
-                          <p className="text-sm font-mono text-white">{idol.holderCount}</p>
+                          <p className="text-sm font-mono text-white">{idol.holderCount || 0}</p>
                           <p className="text-[10px] text-white/30">{t('explore.card.fans')}</p>
                         </div>
                         <div className="p-3 text-center">
