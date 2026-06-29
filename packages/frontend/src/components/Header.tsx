@@ -3,6 +3,7 @@ import { Link, useLocation } from 'react-router-dom'
 import { Wallet as WalletIcon, Menu, X, ChevronDown, LogOut, Copy, Check, Loader2 } from 'lucide-react'
 import { useWallet, WALLET_OPTIONS } from '../hooks/useWallet'
 import LocaleSwitcher from './LocaleSwitcher'
+import { useT } from '../i18n'
 
 const Header = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false)
@@ -21,6 +22,8 @@ const Header = () => {
     connect,
     disconnect,
   } = useWallet()
+
+  const t = useT()
 
   const isActive = (path: string) => location.pathname === path
 
@@ -83,11 +86,11 @@ const Header = () => {
             {/* Desktop Navigation */}
             <nav className="hidden md:flex items-center gap-1">
               {[
-                { path: '/explore', label: 'Explore' },
-                { path: '/create', label: 'Create' },
-                { path: '/agent', label: 'Agent' },
-                { path: '/portfolio', label: 'Portfolio' },
-                { path: '/docs', label: 'Docs' },
+                { path: '/explore', label: t('nav.explore') },
+                { path: '/create', label: t('nav.create') },
+                { path: '/agent', label: t('nav.agent') },
+                { path: '/portfolio', label: t('nav.portfolio') },
+                { path: '/docs', label: t('nav.docs') },
               ].map((item) => (
                 <Link
                   key={item.path}

@@ -82,7 +82,6 @@ contract IdolFactory is Ownable, ReentrancyGuard {
         require(bytes(name).length > 0, "Name required");
         require(bytes(symbol).length > 0, "Symbol required");
         require(bytes(roleType).length > 0, "Role type required");
-        require(idolIdByAgent[idolAgent] == 0, "Agent already has an idol");
 
         // Create token with separate treasury
         IdolToken token = new IdolToken(
